@@ -28,8 +28,11 @@ An AQL Subset Compiler implemented by 322.
 ```
 
 #### To-dos
-* Interpreter
+* Interpreter
     * Lexer
     * Parser
-* Text Tokenizer Pattern Matcher* Regular Expression Engine
+* Text Tokenizer Pattern Matcher
+* Regular Expression Engine
 
+
+#### Members
