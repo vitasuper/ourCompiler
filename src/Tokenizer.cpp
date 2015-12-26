@@ -8,65 +8,50 @@
 #include <string>
 #include "Tokenizer.h"
 
-Tokenizer::Tokenizer(string filePath) {
+Tokenizer::Tokenizer(string file_path) {
     // Open the file with the ReadOnly mode.
-    std::ifstream file(filePath, ios::in);
+    std::ifstream file(file_path.c_str(), ios::in);
     
     char c;
     string word = "";
-    string regex = "";
-    bool regexFlag = false;
+    int cnt = 0;
+    int start_pos = 0;
     while(!file.eof()) {
         file.get(c);
-        if (regexFlag) {
-            regex += c;
-            if (c == '/') {
-                tokens.push_back(regex);
-                regex = "";
-                regexFlag = false;
+        // While meeting a blank, push the word into the words vector.
+        if (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
+            if (word.size() > 0) {
+                words.push_back(Word(word, start_pos, cnt));
+                word = "";
+                start_pos = cnt + 1;
             }
         } else {
-            // While meeting a blank, push the word into the tokens vector.
-            if (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
-                if (word.size() > 0) {
-                    tokens.push_back(word);
+            if (is_number_or_letter(c)) {
+                if (word.size() > 0 && !is_number_or_letter(word[0])) {
+                    // Push the special character such as "," "'" into the words vector.
+                    words.push_back(Word(word, start_pos, cnt));
                     word = "";
+                    word += c;
+                    start_pos = cnt;
+                } else {
+                    // Continue spanning the word.
+                    word += c;
                 }
             } else {
-                if (isNumberOrLetter(c)) {
-                    if (word.size() > 0 && !isNumberOrLetter(word[0])) {
-                        // Push the special character such as "," "'" into the tokens vector.
-                        tokens.push_back(word);
-                        word = "";
-                        word += c;
-                    } else {
-                        // Continue spanning the word.
-                        word += c;
-                    }
-                } else {
-                    // If meet some special character, push the existed word into the tokens vector.
-                    if (word.size() > 0) {
-                        tokens.push_back(word);
-                        word = "";
-                    }
-                    if (c != '/') {
-                        word += c;
-                    } else {
-                        regex += c;
-                        regexFlag = true;
-                    }
+                // If meet some special character, push the existed word into the words vector.
+                if (word.size() > 0) {
+                    words.push_back(Word(word, start_pos, cnt));
+                    word = "";
+                    start_pos = cnt;
                 }
+                word += c;
             }
         }
+        ++cnt;
     }
     file.close();
 }
 
-vector<string> Tokenizer::getTokens() {
-    return tokens;
-}
-
-bool isNumberOrLetter(char c) {
-    if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) return true;
-    else return false;
+vector<Word> Tokenizer::get_words() {
+    return words;
 }

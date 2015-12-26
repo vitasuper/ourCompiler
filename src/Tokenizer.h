@@ -10,16 +10,26 @@
 
 using namespace std;
 
-class Tokenizer {
-  public:
-    Tokenizer(string filePath);
-    vector<string> getTokens();
-  
-  private:
-    string filePath;
-    vector<string> tokens;
+struct Word {
+    string value;
+    int start_pos;
+    int end_pos;
+    Word(string _value, int _start_pos, int _end_pos) {
+        value = _value;
+        start_pos = _start_pos;
+        end_pos = _end_pos;
+    }
 };
 
-bool isNumberOrLetter(char c);
+class Tokenizer {
+  public:
+    Tokenizer(string file_path);
+    vector<Word> get_words();
+  
+  private:
+    vector<Word> words;
+};
+
+bool is_number_or_letter(char c);
 
 #endif /* Tokenizer_h */

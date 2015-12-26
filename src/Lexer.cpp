@@ -2,21 +2,72 @@
 //  Lexer.cpp
 //
 
+#include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 #include "Lexer.h"
-#include "Tokenizer.h"
 
-Lexer::Lexer(string filePath) {
-    Tokenizer tn = Tokenizer(filePath);
-    vector<string> simpleTokens = tn.getTokens();
-    setTokens(simpleTokens);
+Lexer::Lexer(string file_path) {
+    // Open the file with the ReadOnly mode.
+    std::ifstream file(file_path.c_str(), ios::in);
+    
+    char c;
+    string token = "";
+    string regex = "";
+    bool regex_flag = false;
+    while(!file.eof()) {
+        file.get(c);
+        if (regex_flag) {
+            regex += c;
+            if (c == '/') {
+                simple_tokens.push_back(regex);
+                regex = "";
+                regex_flag = false;
+            }
+        } else {
+            // While meeting a blank, push the word into the tokens vector.
+            if (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
+                if (token.size() > 0) {
+                    simple_tokens.push_back(token);
+                    token = "";
+                }
+            } else {
+                if (is_number_or_letter(c)) {
+                    if (token.size() > 0 && !is_number_or_letter(token[0])) {
+                        // Push the special character such as "," "'" into the tokens vector.
+                        simple_tokens.push_back(token);
+                        token = "";
+                        token += c;
+                    } else {
+                        // Continue spanning the word.
+                        token += c;
+                    }
+                } else {
+                    // If meet some special character, push the existed word into the tokens vector.
+                    if (token.size() > 0) {
+                        simple_tokens.push_back(token);
+                        token = "";
+                    }
+                    if (c != '/') {
+                        token += c;
+                    } else {
+                        // Meeting the beginning of regular expression.
+                        regex += c;
+                        regex_flag = true;
+                    }
+                }
+            }
+        }
+    }
+    file.close();
+    set_tokens(simple_tokens);
 }
 
-void Lexer::setTokens(vector<string> simpleTokens) {
+void Lexer::set_tokens(vector<string> _simple_tokens) {
     vector<string>::iterator it;
-    for (it = simpleTokens.begin(); it != simpleTokens.end(); ++it) {
-        string type = getType(*it);
+    for (it = _simple_tokens.begin(); it != _simple_tokens.end(); ++it) {
+        string type = get_type(*it);
         tokens.push_back(Token(*it, type));
     }
 }
@@ -43,7 +94,7 @@ void Lexer::setTokens(vector<string> simpleTokens) {
 // simpleTokens:  eg. /[A-Z][a-z]*/
 // Types:         REALREGEX
 
-string getType(string str) {
+string get_type(string str) {
     string type = "ID";
     if (str == "create") {
         type = "CREATE";
@@ -52,7 +103,7 @@ string getType(string str) {
     } else if (str == "as") {
         type = "AS";
     } else if (str == "output") {
-        type = "output";
+        type = "OUTPUT";
     } else if (str == "select") {
         type = "SELECT";
     } else if (str == "from") {
@@ -93,7 +144,7 @@ string getType(string str) {
         type = "COMMA";
     } else if (str[0] == '/' && str[str.size()-1] == '/') {
         type = "REALREGEX";
-    } else if (isNumber(str)) {
+    } else if (is_number(str)) {
         type = "NUMBER";
     } else {
         type = "ID";
@@ -101,11 +152,16 @@ string getType(string str) {
     return type;
 }
 
-vector<Token> Lexer::getTokens() {
+vector<Token> Lexer::get_tokens() {
     return tokens;
 }
 
-bool isNumber(string str) {
+bool is_number_or_letter(char c) {
+    if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) return true;
+    else return false;
+}
+
+bool is_number(string str) {
     for (int i = 0; i < str.size(); ++i) {
         if (str[i] < '0' || str[i] > '9') return false;
     }
