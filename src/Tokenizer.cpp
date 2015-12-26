@@ -10,8 +10,8 @@
 
 Tokenizer::Tokenizer(string filePath) {
     // Open the file with the ReadOnly mode.
-    std::ifstream file(filePath, ios::in);
-    
+    std::ifstream file(filePath.c_str(), ios::in);
+
     char c;
     string word = "";
     string regex = "";

@@ -9,19 +9,19 @@
 #include <iomanip>
 #include "Tokenizer.h"
 #include "Lexer.h"
+#include "Parser.h"
 
 using namespace std;
 
 int main(int argc, const char * argv[]) {
-    string filePath = "/Users/vitasuper/Desktop/PerLoc.aql";
-    Lexer l = Lexer(filePath);
+    string codePath = "dataset/PerLoc.aql";
+    string inputPath = "dataset/PerLoc.input";
+    Lexer l = Lexer(codePath);
     vector<Token> v = l.getTokens();
-    
-    for (int i = 0; i < v.size(); ++i) {
-        cout << "value: " << setw(15) << left << v[i].value;
-        cout << left << "Type: " << setw(10)  << v[i].type;
-        cout << endl;
-    }
-    
+
+    Parser p = Parser(v, inputPath.c_str(), "asd");
+    p.start();
+    p.print_views();
+
     return 0;
 }

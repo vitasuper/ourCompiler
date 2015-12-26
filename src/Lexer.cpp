@@ -17,6 +17,11 @@ void Lexer::setTokens(vector<string> simpleTokens) {
     vector<string>::iterator it;
     for (it = simpleTokens.begin(); it != simpleTokens.end(); ++it) {
         string type = getType(*it);
+        if (type == "REG") {
+            // Delete the first and the end.
+            (*it).erase((*it).begin());
+            (*it).erase((*it).end() - 1);
+        }
         tokens.push_back(Token(*it, type));
     }
 }
@@ -52,7 +57,7 @@ string getType(string str) {
     } else if (str == "as") {
         type = "AS";
     } else if (str == "output") {
-        type = "output";
+        type = "OUTPUT";
     } else if (str == "select") {
         type = "SELECT";
     } else if (str == "from") {
@@ -92,7 +97,7 @@ string getType(string str) {
     } else if (str == ",") {
         type = "COMMA";
     } else if (str[0] == '/' && str[str.size()-1] == '/') {
-        type = "REALREGEX";
+        type = "REG";
     } else if (isNumber(str)) {
         type = "NUMBER";
     } else {
