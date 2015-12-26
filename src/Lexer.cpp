@@ -68,6 +68,10 @@ void Lexer::set_tokens(vector<string> _simple_tokens) {
     vector<string>::iterator it;
     for (it = _simple_tokens.begin(); it != _simple_tokens.end(); ++it) {
         string type = get_type(*it);
+        if (type == "REG") {
+            (*it).erase((*it).begin());
+            (*it).erase((*it).end() - 1);
+        }
         tokens.push_back(Token(*it, type));
     }
 }
@@ -88,7 +92,7 @@ void Lexer::set_tokens(vector<string> _simple_tokens) {
 //
 // Regular expressions
 // simpleTokens:  eg. /[A-Z][a-z]*/
-// Types:         REALREGEX
+// Types:         REG
 //
 // Others (normal words, normal symbols)
 // simpleTokens:  eg. /[A-Z][a-z]*/
@@ -143,7 +147,7 @@ string get_type(string str) {
     } else if (str == ",") {
         type = "COMMA";
     } else if (str[0] == '/' && str[str.size()-1] == '/') {
-        type = "REALREGEX";
+        type = "REG";
     } else if (is_number(str)) {
         type = "NUMBER";
     } else {

@@ -488,6 +488,8 @@ single()
     } else {
         yyerror("single");
     }
+    Frag alt1 = alt();
+    return alt1;
 }
 
 void
