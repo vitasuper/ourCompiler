@@ -19,12 +19,17 @@ An AQL Subset Compiler implemented by 322.
 └── src
     ├── Lexer.cpp
     ├── Lexer.h
+    ├── Parser.cpp
+    ├── Parser.h
     ├── Tokenizer.cpp
     ├── Tokenizer.h
+    ├── View.cpp
+    ├── View.h
     ├── main.cpp
     └── regex.cpp
 
-2 directories, 14 files
+2 directories, 18 files
+
 ```
 
 #### To-dos
@@ -40,3 +45,5 @@ An AQL Subset Compiler implemented by 322.
 * @Tommy
 * @Giaempang
 * @MacroWolf
+
+

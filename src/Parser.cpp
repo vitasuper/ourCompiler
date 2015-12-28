@@ -16,8 +16,6 @@ Parser::Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_
     istreambuf_iterator<char> begin(file), end;
     input_document = string(begin, end);
     file.close();
-
-    cout << input_document << endl;
 }
 
 void Parser::start() {
