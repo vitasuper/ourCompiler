@@ -23,6 +23,8 @@ class View_col {
         View_col(string name);
         void add_span(Span new_span);
         void print_col();
+        string get_view_col_name();
+        vector<Span> get_spans();
     private:
         string view_col_name;
         vector<Span> spans;
@@ -34,6 +36,8 @@ class View {
         View(string name);
         void add_col(View_col new_col);
         void print_view();
+        string get_view_name();
+        vector<View_col> get_view_cols();
     private:
         string view_name;
         vector<View_col> view_cols;
