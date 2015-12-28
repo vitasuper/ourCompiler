@@ -17,6 +17,15 @@ void View::print_view() {
         view_cols.at(i).print_col();
     }
 }
+
+string View::get_view_name() {
+	return view_name;
+}
+
+vector<View_col> View::get_view_cols() {
+	return view_cols;
+}
+
 View_col::View_col(string name) {
     view_col_name = name;
 }
@@ -31,3 +40,13 @@ void View_col::print_col() {
         cout << spans.at(i).token << ":(" << spans.at(i).start_pos << ", " << spans.at(i).end_pos << ")\n";
     }
 }
+
+string View_col::get_view_col_name() {
+	return view_col_name;
+}
+
+vector<Span> View_col::get_spans() {
+	return spans;
+}
+        
+
