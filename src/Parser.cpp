@@ -13,13 +13,11 @@ Parser::Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_
     current_num = 0;
 
     std::ifstream file(_input_path, ios::in);
-    input_document = string();
-    char c;
-    while(!file.eof()) {
-        file.get(c);
-        input_document += c;
-    }
+    istreambuf_iterator<char> begin(file), end;
+    input_document = string(begin, end);
     file.close();
+
+    cout << input_document << endl;
 }
 
 void Parser::start() {
@@ -224,7 +222,7 @@ Token Parser::single_group() {
         current_num++;
         return lex_tokens.at(temp_num);
     }
-    
+
     Token t = Token("", "");
     return t;
 }
