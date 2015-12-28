@@ -1,6 +1,9 @@
 #include "Parser.h"
 #include <fstream>
 #include <iostream>
+#include <iomanip>
+#include <algorithm>
+#include <assert.h>
 
 using namespace std;
 
@@ -19,6 +22,9 @@ Parser::Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_
 }
 
 void Parser::start() {
+    // start processing
+    cout << "Processing " << input_path << endl;
+    
     while (current_num < lex_tokens.size()) {
         if (lex_tokens.at(current_num).type == "CREATE") {
             current_num++;
@@ -74,9 +80,46 @@ vector<View_col> Parser::view_stmt() {
     return v;
 }
 
+/** obtain alias name **/
+const string Parser::alias() {
+    string alias_name = "";
+    if (lex_tokens.at(current_num).type == "AS") {
+        current_num++;
+        
+        if (lex_tokens.at(current_num).type == "ID") {
+            /** obtain alias id **/
+            alias_name = lex_tokens.at(current_num).value;
+            current_num++;
+        }
+    }
+    else {
+        /** empty alias **/
+    }
+    return alias_name;
+}
+
 vector<View_col> Parser::select_stmt() {
-    vector<View_col> v;
-    return v;
+    vector< vector<Token> > select_token_list = select_list();
+    if (lex_tokens.at(current_num).type == "FROM")
+        current_num++;
+    
+    vector<Token> from_token = from_list();
+    
+    vector<View_col> select_col;
+    
+    vector<View> all_views = get_views();
+    int view_cols_num = select_token_list.at(0).size() / 3;
+    
+    View selected_view = get_view_by_view_name(from_token.at(0).value);
+    
+    for (int i = 0; i < view_cols_num; i++) {
+        View_col selected_view_col = selected_view.get_view_col_by_view_col_name(select_token_list.at(0).at(i*3 + 1).value);
+        selected_view_col.set_view_col_name(select_token_list.at(0).at(i*3 + 2).value);
+        select_col.push_back(selected_view_col);
+    }
+    
+    sort(select_col.begin(), select_col.end(), select_cmp);
+    return select_col;
 }
 
 vector<View_col> Parser::extract_stmt() {
@@ -121,23 +164,93 @@ vector<View_col> Parser::extract_stmt() {
         extract_col.push_back(new_view_col);
 
     } else {  // else comes from pattern_spec
-
+        // For debugging...
+        for (int i = 0; i < extract_token_list.at(0).size(); ++i) {
+            cout << extract_token_list.at(0).at(i).value;
+        }
     }
 
     return extract_col;
 }
 
-vector< vector<Token> >  Parser::extract_spec() {
+vector< vector<Token> > Parser::extract_spec() {
     if (lex_tokens.at(current_num).type == "REGEX") {
         current_num++;
         return regex_spec();
     } else if (lex_tokens.at(current_num).type == "PATTERN") {
         current_num++;
-        pattern_spec();
-        // Un do...
+        return pattern_spec();
     }
     vector< vector<Token> > v;
     return v;
+}
+
+vector< vector<Token> >  Parser::select_list() {
+    vector< vector<Token> > token_list;
+    vector<Token> select_list_token;
+    
+    Token default_alias = Token("", "");
+    if (lex_tokens.at(current_num).type == "ID") {
+        select_list_token.push_back(lex_tokens.at(current_num));
+        current_num++;
+    }
+    
+    if (lex_tokens.at(current_num).type == "DOT")
+        current_num++;
+    
+    if (lex_tokens.at(current_num).type == "ID") {
+        select_list_token.push_back(lex_tokens.at(current_num));
+        
+        default_alias.type = lex_tokens.at(current_num).type;
+        default_alias.value = lex_tokens.at(current_num).value;
+        
+        current_num++;
+    }
+    
+    if (lex_tokens.at(current_num).type == "AS") {
+        current_num++;
+        if (lex_tokens.at(current_num).type == "ID") {
+            select_list_token.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+    } else {
+        select_list_token.push_back(default_alias);
+    }
+    
+    while (lex_tokens.at(current_num).type == "COMMA") {
+        current_num++;
+        
+        if (lex_tokens.at(current_num).type == "ID") {
+            select_list_token.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+        
+        if (lex_tokens.at(current_num).type == "DOT")
+            current_num++;
+        
+        if (lex_tokens.at(current_num).type == "ID") {
+            select_list_token.push_back(lex_tokens.at(current_num));
+            
+            default_alias.type = lex_tokens.at(current_num).type;
+            default_alias.value = lex_tokens.at(current_num).value;
+            
+            current_num++;
+        }
+        
+        if (lex_tokens.at(current_num).type == "AS") {
+            current_num++;
+            if (lex_tokens.at(current_num).type == "ID") {
+                select_list_token.push_back(lex_tokens.at(current_num));
+                current_num++;
+            }
+        } else {
+            select_list_token.push_back(default_alias);
+        }
+    }
+    
+    token_list.push_back(select_list_token);
+    
+    return token_list;
 }
 
 vector< vector<Token> > Parser::regex_spec() {
@@ -161,9 +274,102 @@ vector< vector<Token> > Parser::regex_spec() {
 }
 
 
-vector<Token> Parser::pattern_spec() {
-    vector<Token> v;
-    return v;
+vector< vector<Token> > Parser::pattern_spec() {
+    vector< vector<Token> > token_list;
+
+    token_list.push_back(pattern_expr());
+    
+    
+    token_list.push_back(name_spec());
+    
+    return token_list;
+}
+
+vector<Token> Parser::pattern_expr() {
+    vector<Token> pattern_expr_tokens;
+    pattern_expr_tokens = pattern_pkg();
+    pattern_expr_tokens.push_back(Token(" ", "EMPTY"));
+    
+    while (lex_tokens.at(current_num).type == "LEFTPOINTBRACKET" || lex_tokens.at(current_num).type == "LEFTBRACKET" || lex_tokens.at(current_num).type == "REG") {
+        vector<Token> temp_tokens;
+        temp_tokens = pattern_pkg();
+        for (int i = 0; i < temp_tokens.size(); ++i) {
+            pattern_expr_tokens.push_back(temp_tokens.at(i));
+        }
+        pattern_expr_tokens.push_back(Token(" ", "EMPTY"));
+    }
+    return pattern_expr_tokens;
+}
+
+vector<Token> Parser::pattern_pkg() {
+    vector<Token> pattern_pkg_tokens;
+    if (lex_tokens.at(current_num).type == "LEFTPOINTBRACKET") {
+        pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+        current_num++;
+        vector<Token> temp_pattern_pkg_tokens = atom();
+        
+        for (int i = 0; i < temp_pattern_pkg_tokens.size(); ++i) {
+            pattern_pkg_tokens.push_back(temp_pattern_pkg_tokens.at(i));
+        }
+        
+        if (lex_tokens.at(current_num).type == "RIGHTPOINTBRACKET") {
+            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+        
+        if (lex_tokens.at(current_num).type == "LEFTBRACE") {
+            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+        if (lex_tokens.at(current_num).type == "NUMBER") {
+            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+        if (lex_tokens.at(current_num).type == "COMMA") {
+            current_num++;
+        }
+        if (lex_tokens.at(current_num).type == "NUMBER") {
+            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+        if (lex_tokens.at(current_num).type == "RIGHTBRACE") {
+            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+    } else if (lex_tokens.at(current_num).type == "REG") {
+        pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+        current_num++;
+    } else if (lex_tokens.at(current_num).type == "LEFTBRACKET") {
+        pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+        current_num++;
+        
+        vector<Token> temp_pattern_pkg_tokens = pattern_group();
+        for (int i = 0; i < temp_pattern_pkg_tokens.size(); ++i) {
+            pattern_pkg_tokens.push_back(temp_pattern_pkg_tokens.at(i));
+        }
+        
+        if (lex_tokens.at(current_num).type == "RIGHTBRACKET") {
+            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            current_num++;
+        }
+    }
+    return pattern_pkg_tokens;
+}
+
+        
+vector<Token> Parser::atom() {
+    vector<Token> atom_tokens;
+    if (lex_tokens.at(current_num).type == "TOKEN") {
+        atom_tokens.push_back(lex_tokens.at(current_num));
+        current_num++;
+    } else {
+        atom_tokens = column();
+    }
+    return atom_tokens;
+}
+
+vector<Token> Parser::pattern_group() {
+    return pattern_expr();
 }
 
 vector<Token> Parser::column() {
@@ -254,17 +460,158 @@ vector<Token> Parser::from_list() {
     return from_token;
 }
 
-bool Parser::output_stmt() {
-    return true;
+void Parser::output_stmt() {
+    if (lex_tokens.at(current_num).type == "VIEW") {
+        current_num++;
+    }
+    
+    string view_name;
+    if (lex_tokens.at(current_num).type == "ID") {
+        /** obtain view's id **/
+        view_name = lex_tokens.at(current_num).value;
+        current_num++;
+    }
+    
+    /** capture alias **/
+    string alias_name = alias();
+    
+    /** output the specified view **/
+    output_view(view_name, alias_name);
 }
 
+/** Output the view according to the view's name and alias name **/
+void Parser::output_view(const string& view_name, const string& alias_name) {
+    View specified_view = get_view_by_view_name(view_name);
+    if (specified_view.get_view_name().compare("") == 0) {
+        /** Such a view does not exist **/
+        /* some information */
+        cout << "The View named " << view_name << " has not been created" << endl << endl;
+        return;
+    }
+    /** output format **/
+    /**
+     View: view_name/alias_name
+     +--------------------+
+     | view_col_name      |
+     +--------------------+
+     | view_col_elements  |
+     |        :           |
+     |        :           |
+     +--------------------+
+     n rows in set
+     **/
+    cout << "View: " << (alias_name.compare("") == 0 ? view_name : alias_name) << endl;
+    // current view
+    vector<View_col> view_cols = specified_view.get_view_cols();
+    // current view size
+    unsigned view_size = view_cols.size();
+    // longest span's length array
+    unsigned longest_span_length[view_size];
+    for (unsigned i = 0; i < view_size; i++) longest_span_length[i] = 0;
+    // biggest view_col size
+    unsigned biggest_view_col_size = 0;
+    /* find the longest span's length for each view_col and the biggest view_col size*/
+    for (unsigned i = 0; i < view_size; i++) {
+        vector<Span> current_view_col = view_cols.at(i).get_spans();
+        // find the longest span's length for each view_col
+        for (unsigned j = 0; j < current_view_col.size(); j++) {
+            unsigned span_length = current_view_col.at(j).as_string.length();
+            if (span_length > longest_span_length[i]) {
+                longest_span_length[i] = span_length;
+            }
+        }
+        if (view_cols.at(i).get_view_col_name().length() > longest_span_length[i]) {
+            // check whether current view_col's name is longest
+            longest_span_length[i] = view_cols.at(i).get_view_col_name().length();
+        }
+        
+        // find the biggest view_col size
+        if (current_view_col.size() > biggest_view_col_size) {
+            biggest_view_col_size = current_view_col.size();
+        }
+    }
+    
+    // index for spans in view_cols
+    unsigned span_index = 0;
+    /* print the view in proper format */
+    for (unsigned row = 0; row < biggest_view_col_size + 4; row++) {
+        for (unsigned col = 0; col < view_size; col++) {
+            
+            if (row == 0 || row == 2 || row == biggest_view_col_size + 3) {
+                /**
+                 Format 1 (Appear in the first, third and last lines)
+                 The format is like "+--------+--------+------+"
+                 **/
+                cout << setw(longest_span_length[col] + 3) << setfill('-') << left << "+";
+            }
+            
+            else {
+                // get current view_col
+                View_col view_col = view_cols.at(col);
+                if (row == 1) {
+                    /**
+                     Format 2 (Appear only in the second line)
+                     The format is like "| view_col_name1       | view_col_name2         | view_col_name3     |"
+                     **/
+                    cout << setw(longest_span_length[col] + 3) << setfill(' ') << left << "| " + view_col.get_view_col_name();
+                }
+                else {
+                    // get spans in current view_col
+                    vector<Span> current_spans = view_col.get_spans();
+                    /**
+                     Format 3 (Appear in the rest lines)
+                     The format is like "| span1           | span2         | span3       |"
+                     **/
+                    cout << setw(longest_span_length[col] + 3) << setfill(' ') << left << "| " + (span_index < current_spans.size() ? current_spans.at(span_index).as_string : "");
+                }
+            }
+            
+        }
+        // process the line end
+        if (row == 0 || row == 2 || row == biggest_view_col_size + 3) {
+            cout << "+" << endl;
+        }
+        else {
+            cout << "|" << endl;
+            if (row != 1) {
+                // add 1 to span index
+                span_index++;
+            }
+        }
+    }
+    // for debug
+    assert(span_index == biggest_view_col_size);
+    
+    cout << biggest_view_col_size << (biggest_view_col_size > 1 ? " rows" : " row") << " in set" << endl << endl;
+}
 
 void Parser::add_view(View new_view) {
     views.push_back(new_view);
+}
+
+View Parser::get_view_by_view_name(string view_name) {
+    vector<View> all_views = get_views();
+    int views_num = all_views.size();
+    for (int i = 0; i < views_num; i++) {
+        if (all_views.at(i).get_view_name() == view_name) {
+            return all_views.at(i);
+            break;
+        }
+    }
+    View empty_view = View("");
+    return empty_view;
+}
+
+vector<View> Parser::get_views() {
+    return views;
 }
 
 void Parser::print_views() {
     for (int i = 0; i < views.size(); i++) {
         views.at(i).print_view();
     }
+}
+
+bool select_cmp(View_col a, View_col b) {
+    return a.get_view_col_name() < b.get_view_col_name();
 }
