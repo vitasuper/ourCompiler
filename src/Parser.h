@@ -4,6 +4,28 @@
 #include "Lexer.h"
 #include "View.h"
 
+struct Block {
+    string type; // REG or ID ID or TOKEN
+    int group_num; // If not grouped, group_num equals to -1
+    string group_name;
+    // REG
+    string reg_value;
+    
+    // ID ID
+    string view_name;
+    string view_col_name;
+    
+    // TOKEN
+    int min, max;
+    
+    vector<Span> view_col;
+    
+    Block(string _type) {
+        type = _type;
+        group_num = -1;
+    }
+};
+
 class Parser {
   public:
     Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_output_path);
@@ -15,6 +37,7 @@ class Parser {
     vector< vector<Token> > select_list();
 
     vector<View_col> extract_stmt();
+    string get_view_name_from_view_alias_name(string view_alias_name, vector<Token> from_token);
     vector< vector<Token> > extract_spec();
     vector< vector<Token> > regex_spec();
     vector<Token> pattern_expr();
@@ -53,5 +76,7 @@ class Parser {
 };
 
 bool select_cmp(View_col a, View_col b);
+
+int convert_string_to_num(string str);
 
 #endif // PARSER_H_INCLUDED

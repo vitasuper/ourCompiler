@@ -55,3 +55,14 @@ Tokenizer::Tokenizer(string file_path) {
 vector<Word> Tokenizer::get_words() {
     return words;
 }
+
+int Tokenizer::get_words_num_between(int start_pos, int end_pos) {
+    int cnt = 0;
+    for (int i = 0; i < words.size(); ++i) {
+        if (words.at(i).start_pos >= start_pos && words.at(i).end_pos <= end_pos) {
+            ++cnt;
+        }
+        if (words.at(i).end_pos > end_pos) break;
+    }
+    return cnt;
+}

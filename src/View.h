@@ -30,10 +30,12 @@ public:
     void add_span(Span new_span);
     void print_col();
     void set_view_col_name(string new_view_col_name);
+    void set_group_num(int _group_num);
     string get_view_col_name();
     vector<Span> get_spans();
 private:
     string view_col_name;
+    int group_num;
     vector<Span> spans;
 };
 

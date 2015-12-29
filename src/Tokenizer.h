@@ -25,7 +25,7 @@ class Tokenizer {
   public:
     Tokenizer(string file_path);
     vector<Word> get_words();
-  
+    int get_words_num_between(int start_pos, int end_pos);
   private:
     vector<Word> words;
 };

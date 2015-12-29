@@ -57,11 +57,17 @@ vector<View_col> View::get_view_cols() {
 
 View_col::View_col(string name) {
     view_col_name = name;
+    group_num = 0;
 }
 
 void View_col::set_view_col_name(string new_view_col_name) {
     view_col_name = new_view_col_name;
 }
+
+void View_col::set_group_num(int _group_num) {
+    group_num = _group_num;
+}
+
 
 void View_col::add_span(Span new_span) {
     spans.push_back(new_span);

@@ -165,12 +165,112 @@ vector<View_col> Parser::extract_stmt() {
 
     } else {  // else comes from pattern_spec
         // For debugging...
-        for (int i = 0; i < extract_token_list.at(0).size(); ++i) {
-            cout << extract_token_list.at(0).at(i).value;
+//        for (int i = 0; i < extract_token_list.at(0).size(); ++i) {
+//            cout << extract_token_list.at(0).at(i).value;
+//        }
+        
+        vector<Token> pattern_expression = extract_token_list.at(0);
+        vector<Token> group_names = extract_token_list.at(1);
+        int i = 0;
+        int group_num = 0;
+        vector<Block> possessed_pattern;
+        
+        while (i < pattern_expression.size()) {
+            if (pattern_expression.at(i).type == "LEFTBRACKET") {
+                ++group_num;
+                
+                ++i;
+                if (pattern_expression.at(i).type == "ID") {
+                    string view_alias_name = pattern_expression.at(i).value;
+                    
+                    ++i;
+                    string view_col_name = pattern_expression.at(i).value;
+                    
+                    Block current_block = Block("ID");
+                    current_block.view_name = get_view_name_from_view_alias_name(view_alias_name, from_token);
+                    current_block.view_col_name = view_col_name;
+                    current_block.group_num = group_num;
+                    
+                    possessed_pattern.push_back(current_block);
+                    
+                    
+                } else if (pattern_expression.at(i).type == "REG") {
+                    Block current_block = Block("REG");
+                    current_block.reg_value = pattern_expression.at(i).value;
+                    current_block.group_num = group_num;
+                    
+                    possessed_pattern.push_back(current_block);
+                }
+                
+                i += 3; // Pass EMPTY ) EMPTY
+                
+            } else if (pattern_expression.at(i).type == "ID") {
+                string view_alias_name = pattern_expression.at(i).value;
+                
+                ++i;
+                string view_col_name = pattern_expression.at(i).value;
+                
+                Block current_block = Block("ID");
+                current_block.view_name = get_view_name_from_view_alias_name(view_alias_name, from_token);
+                current_block.view_col_name = view_col_name;
+                
+                possessed_pattern.push_back(current_block);
+                
+                ++i; // Pass EMPTY
+            } else if (pattern_expression.at(i).type == "REG") {
+                Block current_block = Block("REG");
+                current_block.reg_value = pattern_expression.at(i).value;
+                
+                possessed_pattern.push_back(current_block);
+                
+                ++i; // Pass EMPTY
+            } else if (pattern_expression.at(i).type == "TOKEN") {
+                ++i;
+                int min = convert_string_to_num(pattern_expression.at(i).value);
+                
+                ++i;
+                int max = convert_string_to_num(pattern_expression.at(i).value);
+                
+                Block current_block = Block("TOKEN");
+                current_block.min = min;
+                current_block.max = max;
+                
+                possessed_pattern.push_back(current_block);
+                
+                ++i; // Pass EMPTY
+            }
+            ++i;
         }
+        
+        for (int i = 0; i < possessed_pattern.size(); ++i) {
+            if (possessed_pattern.at(i).group_num != -1) {
+                int num = possessed_pattern.at(i).group_num;
+                possessed_pattern.at(i).group_name = group_names.at(num).value;
+            }
+        }
+        
+//        for (int i = 0; i < possessed_pattern.size(); ++i) {
+//            if (possessed_pattern.at(i).group_num != -1) {
+//                cout << possessed_pattern.at(i).group_name << endl;
+//            }
+//        }
+        
     }
 
     return extract_col;
+}
+
+string Parser::get_view_name_from_view_alias_name(string view_alias_name, vector<Token> from_token) {
+    // Get real view_name instead of alias name from from_token.
+    string view_name = "";
+    for (unsigned i = 0; i < from_token.size(); ++i) {
+        if (from_token.at(i).value == view_alias_name) {
+            // Find view_alias_name in from_token
+            view_name = from_token.at(i-1).value;
+            break;
+        }
+    }
+    return view_name;
 }
 
 vector< vector<Token> > Parser::extract_spec() {
@@ -304,7 +404,7 @@ vector<Token> Parser::pattern_expr() {
 vector<Token> Parser::pattern_pkg() {
     vector<Token> pattern_pkg_tokens;
     if (lex_tokens.at(current_num).type == "LEFTPOINTBRACKET") {
-        pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+        //pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
         current_num++;
         vector<Token> temp_pattern_pkg_tokens = atom();
         
@@ -313,12 +413,12 @@ vector<Token> Parser::pattern_pkg() {
         }
         
         if (lex_tokens.at(current_num).type == "RIGHTPOINTBRACKET") {
-            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            //pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
             current_num++;
         }
         
         if (lex_tokens.at(current_num).type == "LEFTBRACE") {
-            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            //pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
             current_num++;
         }
         if (lex_tokens.at(current_num).type == "NUMBER") {
@@ -333,7 +433,7 @@ vector<Token> Parser::pattern_pkg() {
             current_num++;
         }
         if (lex_tokens.at(current_num).type == "RIGHTBRACE") {
-            pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
+            //pattern_pkg_tokens.push_back(lex_tokens.at(current_num));
             current_num++;
         }
     } else if (lex_tokens.at(current_num).type == "REG") {
@@ -391,6 +491,7 @@ vector<Token> Parser::column() {
 }
 
 
+
 vector<Token> Parser::name_spec() {
     vector<Token> name_token;
     if (lex_tokens.at(current_num).type == "AS") {
@@ -404,10 +505,11 @@ vector<Token> Parser::name_spec() {
         current_num++;
         name_token.push_back(single_group());
         while (lex_tokens.at(current_num).type == "AND") {
+            current_num++;
             name_token.push_back(single_group());
         }
     }
-
+    
     return name_token;
 }
 
@@ -615,3 +717,12 @@ void Parser::print_views() {
 bool select_cmp(View_col a, View_col b) {
     return a.get_view_col_name() < b.get_view_col_name();
 }
+
+int convert_string_to_num(string str) {
+    int result = 0;
+    for (int i = 0; i < str.size(); ++i) {
+        result = result * 10 + (str[i] - '0');
+    }
+    return result;
+}
+
