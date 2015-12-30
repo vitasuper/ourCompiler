@@ -9,12 +9,12 @@ using namespace std;
 
 vector<vector<int> > findall(const char *regex, const char *content);
 
-Parser::Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_output_path) {
+Parser::Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_output_path) : tokenizer(_input_path) {
     lex_tokens = _lex_tokens;
     input_path = _input_path;
     output_path = _output_path;
     current_num = 0;
-
+    
     std::ifstream file(_input_path, ios::in);
     istreambuf_iterator<char> begin(file), end;
     input_document = string(begin, end);
@@ -117,8 +117,6 @@ vector<View_col> Parser::select_stmt() {
         selected_view_col.set_view_col_name(select_token_list.at(0).at(i*3 + 2).value);
         select_col.push_back(selected_view_col);
     }
-    
-    sort(select_col.begin(), select_col.end(), select_cmp);
     return select_col;
 }
 
@@ -173,7 +171,7 @@ vector<View_col> Parser::extract_stmt() {
         vector<Token> group_names = extract_token_list.at(1);
         int i = 0;
         int group_num = 0;
-        vector<Block> possessed_pattern;
+        vector<Block> processed_pattern;
         
         while (i < pattern_expression.size()) {
             if (pattern_expression.at(i).type == "LEFTBRACKET") {
@@ -191,7 +189,7 @@ vector<View_col> Parser::extract_stmt() {
                     current_block.view_col_name = view_col_name;
                     current_block.group_num = group_num;
                     
-                    possessed_pattern.push_back(current_block);
+                    processed_pattern.push_back(current_block);
                     
                     
                 } else if (pattern_expression.at(i).type == "REG") {
@@ -199,7 +197,7 @@ vector<View_col> Parser::extract_stmt() {
                     current_block.reg_value = pattern_expression.at(i).value;
                     current_block.group_num = group_num;
                     
-                    possessed_pattern.push_back(current_block);
+                    processed_pattern.push_back(current_block);
                 }
                 
                 i += 3; // Pass EMPTY ) EMPTY
@@ -214,14 +212,14 @@ vector<View_col> Parser::extract_stmt() {
                 current_block.view_name = get_view_name_from_view_alias_name(view_alias_name, from_token);
                 current_block.view_col_name = view_col_name;
                 
-                possessed_pattern.push_back(current_block);
+                processed_pattern.push_back(current_block);
                 
                 ++i; // Pass EMPTY
             } else if (pattern_expression.at(i).type == "REG") {
                 Block current_block = Block("REG");
                 current_block.reg_value = pattern_expression.at(i).value;
                 
-                possessed_pattern.push_back(current_block);
+                processed_pattern.push_back(current_block);
                 
                 ++i; // Pass EMPTY
             } else if (pattern_expression.at(i).type == "TOKEN") {
@@ -235,20 +233,49 @@ vector<View_col> Parser::extract_stmt() {
                 current_block.min = min;
                 current_block.max = max;
                 
-                possessed_pattern.push_back(current_block);
+                processed_pattern.push_back(current_block);
                 
                 ++i; // Pass EMPTY
             }
             ++i;
         }
         
-        for (int i = 0; i < possessed_pattern.size(); ++i) {
-            if (possessed_pattern.at(i).group_num != -1) {
-                int num = possessed_pattern.at(i).group_num;
-                possessed_pattern.at(i).group_name = group_names.at(num).value;
+        for (int i = 0; i < processed_pattern.size(); ++i) {
+            if (processed_pattern.at(i).group_num != -1) {
+                int num = processed_pattern.at(i).group_num;
+                processed_pattern.at(i).group_name = group_names.at(num).value;
             }
+            
+            if (processed_pattern.at(i).type == "REG") {
+                vector< vector<int> > reg_locations = findall(processed_pattern.at(i).reg_value.c_str(), input_document.c_str());
+                vector<Span> temp_spans;
+                for (unsigned i = 0; i < reg_locations.size(); i++) {
+                    int start_pos = reg_locations.at(i).at(0);
+                    int end_pos = reg_locations.at(i).at(1);
+                    // get the token's message
+                    string token_message = input_document.substr(start_pos, end_pos - start_pos);
+                    // form a span
+                    Span span(token_message, start_pos, end_pos);
+                    temp_spans.push_back(span);
+                }
+                // set view col
+                processed_pattern.at(i).view_col = temp_spans;
+            } else if (processed_pattern.at(i).type == "ID") {
+                string view_name = processed_pattern.at(i).view_name;
+                string view_col_name = processed_pattern.at(i).view_col_name;
+                // get view by view name
+                View view = get_view_by_view_name(view_name);
+                // get view col
+                View_col view_col = view.get_view_col_by_view_col_name(view_col_name);
+                // set view col
+                processed_pattern.at(i).view_col = view_col.get_spans();
+            }
+            
         }
+
+ // *******************
         
+        extract_col = pattern_matching(processed_pattern, group_names);
 //        for (int i = 0; i < possessed_pattern.size(); ++i) {
 //            if (possessed_pattern.at(i).group_num != -1) {
 //                cout << possessed_pattern.at(i).group_name << endl;
@@ -259,6 +286,157 @@ vector<View_col> Parser::extract_stmt() {
 
     return extract_col;
 }
+
+//------------------------------------------------------------------------------------------
+/* The core of this function is treating vector<Span> as the spans in Group 0 */
+vector< vector<Span> > Parser::pattern_matching_recursion(vector< vector<Span> > _group, unsigned& block_index, int _min, int _max, const vector<Block>& processed_pattern) {
+    if (block_index < processed_pattern.size()) {
+        // recursion
+        
+        int min = _min, max = _max;
+        // get current block
+        Block current_block = processed_pattern.at(block_index);
+        // new group
+        vector< vector<Span> > group = _group;
+        
+        if (processed_pattern.at(block_index).type == "TOKEN") {
+            // the block is a "TOKEN"
+            
+            // get min and max from "TOKEN" block
+            min = current_block.min;
+            max = current_block.max;
+            
+        } else {
+            // the block is a "REG" or "ID"
+            
+            // get current block's view col
+            vector<Span> current_block_view_col = current_block.view_col;
+            if (block_index == 0) {
+                // initialize
+                for (unsigned i = 0; i < current_block_view_col.size(); i++) {
+                    vector<Span> temp_span;
+                    temp_span.push_back(current_block_view_col.at(i));
+                    group.push_back(temp_span);
+                }
+                
+            } else {
+                group.clear();
+                for (unsigned i = 0; i < _group.size(); i++) {
+                    for (unsigned j = 0; j < current_block_view_col.size(); j++) {
+                        // pick up the last span in group's current big span
+                        Span first_span = _group.at(i).at(_group.at(i).size() - 1);
+                        // pick up the corresponding span in current block's view col
+                        Span second_span = current_block_view_col.at(j);
+                        // get first span's end position
+                        int first_span_end_position = first_span.end_pos;
+                        // get second span's start position
+                        int second_span_start_position = second_span.start_pos;
+                        
+                        if (first_span_end_position <= second_span_start_position) {
+                            // at least first span's end position should not be bigger than second span's start position
+                            if (_min > 0 && _max > 0) {
+                                // try matching
+                                // get largest possible number of words between this two spans
+                                int largest_possible_number_of_words = tokenizer.get_words_num_between(first_span_end_position, second_span_start_position);
+                                if (_min <= largest_possible_number_of_words && largest_possible_number_of_words < _max) {
+                                    // get the words and matching successfully
+                                    // combine the new big span
+                                    vector<Span> temp_span;
+                                    for (unsigned k = 0; k < _group.at(i).size(); k++) {
+                                        temp_span.push_back(_group.at(i).at(k));
+                                    }
+                                    temp_span.push_back(second_span);
+                                    // add new big span into new group
+                                    group.push_back(temp_span);
+                                }
+                            } else {
+                                // for debug
+                                assert(_min == 0 && _max == 0);
+                                // matching without TOKEN in between
+                                // combine the new big span
+                                if (tokenizer.get_words_num_between(first_span_end_position, second_span_start_position) == 0) {
+                                    // combine only when two spans is neighbor to each other
+                                    vector<Span> temp_span;
+                                    for (unsigned k = 0; k < _group.at(i).size(); k++) {
+                                        temp_span.push_back(_group.at(i).at(k));
+                                    }
+                                    temp_span.push_back(second_span);
+                                    // add new big span into new group
+                                    group.push_back(temp_span);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // restore min and max
+            min = max = 0;
+        }
+        // point to next block
+        block_index++;
+        // go on recursion
+        return pattern_matching_recursion(group, block_index, min, max, processed_pattern);
+    }
+    
+    // finish recursion
+    return _group;
+}
+
+vector<View_col> Parser::pattern_matching(const vector<Block>& processed_pattern, const vector<Token>& group_names) {
+    // initialize the block index, used for recursion
+    unsigned block_index = 0;
+    // used for recursion
+    vector< vector<Span> > _group;
+    // get group 0
+    vector< vector<Span> > group = pattern_matching_recursion(_group, block_index, 0, 0, processed_pattern);
+    // get blocks that are "ID" or "REG"
+    vector<Block> id_and_reg_blocks;
+    for (unsigned i = 0; i < processed_pattern.size(); i++) {
+        if (processed_pattern.at(i).type == "ID" || processed_pattern.at(i).type == "REG") {
+            id_and_reg_blocks.push_back(processed_pattern.at(i));
+        }
+    }
+
+    vector<View_col> view_cols;
+    // establish the view cols in view (from group 1 to group n)
+    for (unsigned i = 0; i < group.at(0).size(); i++) {
+        // for each "ID" of "REG" block, establish its view col
+        vector<Span> spans;
+        for (unsigned j = 0; j < group.size(); j++) {
+            spans.push_back(group.at(j).at(i));
+        }
+        if (id_and_reg_blocks.at(i).group_num != -1) {
+            // only establish view cols for captured block (group_num >= 0)
+            View_col view_col(id_and_reg_blocks.at(i).group_name, spans);
+            view_col.set_group_num(id_and_reg_blocks.at(i).group_num);
+            view_cols.push_back(view_col);
+        }
+    }
+    // establish group 0
+    vector<Span> spans;
+    for (unsigned i = 0; i < group.size(); i++) {
+        // get the first span from the current big span
+        Span head_span = group.at(i).at(0);
+        // get the last span from the current big span
+        Span rear_span = group.at(i).at(group.at(i).size() - 1);
+        // get the start position of the head span, as the start position of the big span
+        int start_position = head_span.start_pos;
+        // get the end position of the rear span, as the end position of the big span
+        int end_position = rear_span.end_pos;
+        // get the string message from tokenizer
+        string token_message = input_document.substr(start_position, end_position - start_position);
+        // combine the big span (consists of spans) to a span
+        Span span(token_message, start_position, end_position);
+        // add the span
+        spans.push_back(span);
+    }
+    View_col group_zero(group_names.at(0).value, spans);
+    group_zero.set_group_num(0);
+    view_cols.push_back(group_zero);
+    return view_cols;
+}
+
+//------------------------------------------------------------------------------------------
 
 string Parser::get_view_name_from_view_alias_name(string view_alias_name, vector<Token> from_token) {
     // Get real view_name instead of alias name from from_token.
@@ -490,10 +668,10 @@ vector<Token> Parser::column() {
     return column_token;
 }
 
-
-
 vector<Token> Parser::name_spec() {
     vector<Token> name_token;
+    
+    
     if (lex_tokens.at(current_num).type == "AS") {
         current_num++;
         if (lex_tokens.at(current_num).type == "ID") {
@@ -502,23 +680,34 @@ vector<Token> Parser::name_spec() {
             return name_token;
         }
     } else if (lex_tokens.at(current_num).type == "RETURN") {
+        vector<Single_group> temp_for_sort;
+        
         current_num++;
-        name_token.push_back(single_group());
+        temp_for_sort.push_back(single_group());
         while (lex_tokens.at(current_num).type == "AND") {
             current_num++;
-            name_token.push_back(single_group());
+            temp_for_sort.push_back(single_group());
+        }
+        
+        sort(temp_for_sort.begin(), temp_for_sort.end(), single_group_cmp);
+        
+        for (int i = 0; i < temp_for_sort.size(); ++i) {
+            name_token.push_back(temp_for_sort.at(i).group_id);
         }
     }
     
     return name_token;
 }
 
-Token Parser::single_group() {
+Single_group Parser::single_group() {
+    int group_num = -1;
     if (lex_tokens.at(current_num).type == "GROUP")
         current_num++;
 
-    if (lex_tokens.at(current_num).type == "NUMBER")
+    if (lex_tokens.at(current_num).type == "NUMBER") {
+        group_num = convert_string_to_num(lex_tokens.at(current_num).value);
         current_num++;
+    }
 
     if (lex_tokens.at(current_num).type == "AS")
         current_num++;
@@ -526,11 +715,11 @@ Token Parser::single_group() {
     if (lex_tokens.at(current_num).type == "ID") {
         int temp_num = current_num;
         current_num++;
-        return lex_tokens.at(temp_num);
+        return Single_group(group_num, lex_tokens.at(temp_num));
     }
 
-    Token t = Token("", "");
-    return t;
+    Single_group s(0, Token("", ""));
+    return s;
 }
 
 vector<Token> Parser::from_list() {
@@ -605,6 +794,8 @@ void Parser::output_view(const string& view_name, const string& alias_name) {
     cout << "View: " << (alias_name.compare("") == 0 ? view_name : alias_name) << endl;
     // current view
     vector<View_col> view_cols = specified_view.get_view_cols();
+    // sort the view cols
+    sort(view_cols.begin(), view_cols.end(), view_col_cmp);
     // current view size
     unsigned view_size = view_cols.size();
     // longest span's length array
@@ -714,8 +905,12 @@ void Parser::print_views() {
     }
 }
 
-bool select_cmp(View_col a, View_col b) {
+bool view_col_cmp(View_col a, View_col b) {
     return a.get_view_col_name() < b.get_view_col_name();
+}
+
+bool single_group_cmp(Single_group a, Single_group b) {
+    return a.group_num < b.group_num;
 }
 
 int convert_string_to_num(string str) {

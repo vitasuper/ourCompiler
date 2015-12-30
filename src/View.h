@@ -27,6 +27,7 @@ struct Span {
 class View_col {
 public:
     View_col(string name);
+    View_col(string name, vector<Span> _spans);
     void add_span(Span new_span);
     void print_col();
     void set_view_col_name(string new_view_col_name);

@@ -33,20 +33,26 @@ int main(int argc, const char * argv[]) {
     }
 
 #else
+//    Token t = Token("a", "b");
+//    Token xx = t;
+//    
+//    cout << xx.value << " " << xx.type;
+//    
     string code_path = "/Users/vitasuper/Desktop/PerLoc.aql";
     string input_path = "/Users/vitasuper/Desktop/PerLoc.input";
-    Tokenizer tn = Tokenizer(input_path);
-    for (int i = 0; i < tn.get_words().size(); ++i) {
-        cout << tn.get_words().at(i).value;
-        printf("(%d, %d)\n", tn.get_words().at(i).start_pos, tn.get_words().at(i).end_pos);
-    }
-    cout << tn.get_words_num_between(6, 57) << endl;
-//    Lexer l = Lexer(code_path);
-//    vector<Token> v = l.get_tokens();
-//    
-//    Parser p = Parser(v, input_path.c_str(), "asd");
-//    p.start();
-//    p.print_views();
+//    Tokenizer tn = Tokenizer(input_path);
+//    for (int i = 0; i < tn.get_words().size(); ++i) {
+//        cout << tn.get_words().at(i).value;
+//        printf("(%d, %d)\n", tn.get_words().at(i).start_pos, tn.get_words().at(i).end_pos);
+//    }
+//    cout << tn.get_words_num_between(6, 57) << endl;
+    
+    Lexer l = Lexer(code_path);
+    vector<Token> v = l.get_tokens();
+    
+    Parser p = Parser(v, input_path.c_str(), "asd");
+    p.start();
+    //p.print_views();
 #endif
     return 0;
 }

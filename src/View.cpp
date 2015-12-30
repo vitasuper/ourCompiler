@@ -60,6 +60,11 @@ View_col::View_col(string name) {
     group_num = 0;
 }
 
+View_col::View_col(string name, vector<Span> _spans) {
+    view_col_name = name;
+    spans = _spans;
+}
+
 void View_col::set_view_col_name(string new_view_col_name) {
     view_col_name = new_view_col_name;
 }
