@@ -26,7 +26,7 @@ Lexer::Lexer(string file_path) {
                 regex_flag = false;
             }
         } else {
-            // While meeting a blank, push the word into the tokens vector.
+            // While meeting a blank, push the word into the simple_tokens vector.
             if (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
                 if (token.size() > 0) {
                     simple_tokens.push_back(token);
@@ -35,7 +35,7 @@ Lexer::Lexer(string file_path) {
             } else {
                 if (is_number_or_letter(c)) {
                     if (token.size() > 0 && !is_number_or_letter(token[0])) {
-                        // Push the special character such as "," "'" into the tokens vector.
+                        // Push the special character such as "," "'" into the simple_tokens vector.
                         simple_tokens.push_back(token);
                         token = "";
                         token += c;
@@ -44,7 +44,7 @@ Lexer::Lexer(string file_path) {
                         token += c;
                     }
                 } else {
-                    // If meet some special character, push the existed word into the tokens vector.
+                    // If meet some special character, push the existed word into the simple_tokens vector.
                     if (token.size() > 0) {
                         simple_tokens.push_back(token);
                         token = "";
@@ -76,6 +76,7 @@ void Lexer::set_tokens(vector<string> _simple_tokens) {
     }
 }
 
+//
 // Type list:
 //
 // Identifiers:
@@ -97,6 +98,7 @@ void Lexer::set_tokens(vector<string> _simple_tokens) {
 // Others (normal words, normal symbols)
 // simpleTokens:  eg. /[A-Z][a-z]*/
 // Types:         REALREGEX
+//
 
 string get_type(string str) {
     string type = "ID";

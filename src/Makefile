@@ -26,5 +26,8 @@ Regex.o: regex.cpp
 clean:
 	rm *.o ../dataset/*.output ../dataset/*/*.output main
 
+cleanMainAndO:
+	rm main *.o
+
 cleanoutput:
 	rm ../dataset/*.output ../dataset/*/*.output

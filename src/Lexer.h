@@ -21,14 +21,6 @@ struct Token {
         value = _token.value;
         type = _token.type;
     }
-    bool operator == (const Token& _token) const {
-        return value == _token.value && type == _token.type;
-    }
-//    Token& operator = (const Token& _token) {
-//        value = _token.value;
-//        type = _token.type;
-//        return *this;
-//    }
 };
 
 class Lexer {

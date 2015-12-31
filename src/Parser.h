@@ -7,9 +7,10 @@
 #include "Tokenizer.h"
 
 struct Block {
-    string type; // REG or ID ID or TOKEN
-    int group_num; // If not grouped, group_num equals to -1
-    string group_name;
+    string type;           // REG or ID ID or TOKEN
+    int group_num;         // If not grouped, group_num equals to -1
+    string group_name;     // If grouped, the Block has a group name 
+
     // REG
     string reg_value;
     
@@ -80,10 +81,7 @@ class Parser {
     int current_num;
     const char *input_path;
     const char *output_path;
-    
-//    string input_path;
-//    string output_path;
-//    
+
     string file_name;
     string input_document;
     Tokenizer tokenizer;

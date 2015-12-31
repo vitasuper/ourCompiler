@@ -4,10 +4,10 @@
 using namespace std;
 
 const string span_to_string(const string& token, int start, int end) {
-    /**
-     The string form of a Span is following:
-     "Token:(start_pos, end_pos)"
-     **/
+    //
+    // The string form of a Span is following:
+    // "Token:(start_pos, end_pos)"
+    //
     string span_ = token + ":";
     char start_pos_[12];
     snprintf(start_pos_, sizeof(start_pos_), "%d", start);
@@ -92,5 +92,3 @@ string View_col::get_view_col_name() {
 vector<Span> View_col::get_spans() {
     return spans;
 }
-
-

@@ -14,8 +14,8 @@ struct Span {
     string token;
     int start_pos;
     int end_pos;
-    // string form of the span
-    string as_string;
+    string as_string;  // The string form of the span
+
     Span(string _token, int start, int end) {
         token = _token;
         start_pos = start;
@@ -25,7 +25,7 @@ struct Span {
 };
 
 class View_col {
-public:
+  public:
     View_col(string name);
     View_col(string name, vector<Span> _spans);
     void add_span(Span new_span);
@@ -34,14 +34,14 @@ public:
     void set_group_num(int _group_num);
     string get_view_col_name();
     vector<Span> get_spans();
-private:
+  private:
     string view_col_name;
     int group_num;
     vector<Span> spans;
 };
 
 class View {
-public:
+  public:
     View() {};
     View(string name);
     void add_col(View_col new_col);
@@ -49,7 +49,7 @@ public:
     View_col get_view_col_by_view_col_name(string view_col_name);
     string get_view_name();
     vector<View_col> get_view_cols();
-private:
+  private:
     string view_name;
     vector<View_col> view_cols;
 };

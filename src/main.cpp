@@ -18,6 +18,7 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     if (argc != 4) {
+        // If the number of the parameter is not correct, stop the program and print the following sentence.
         cout << "The number of parameter is not correct! Please check out and try again!" << endl;
         return 0;
     }
@@ -26,7 +27,7 @@ int main(int argc, const char * argv[]) {
     string input_path = argv[2];
     string output_path = argv[3];
     
-    if (input_path.substr(input_path.size()-6, 6) == ".input") {
+    if (input_path.substr(input_path.size() - 6, 6) == ".input") {
         // If input_path is a *.input file
         Lexer l = Lexer(code_path);
         vector<Token> v = l.get_tokens();
@@ -49,6 +50,7 @@ int main(int argc, const char * argv[]) {
             char output_suffix[] = ".output";
             
             if (strlen(dirp->d_name) >= 6 && strcmp(strcpy(suffix, (dirp->d_name + strlen(dirp->d_name) - 6)), input_suffix) == 0) {
+                // Get file name.  e.g. PerLoc
                 int i = 0;
                 for (; i < strlen(dirp->d_name); ++i) {
                     if (dirp->d_name[i] != '.') {
@@ -62,6 +64,7 @@ int main(int argc, const char * argv[]) {
                 Lexer l = Lexer(code_path);
                 vector<Token> v = l.get_tokens();
                 
+                // Get total_input_path.  e.g. ../dataset/PerLocInput/
                 char total_input_path[200];
                 int j = 0;
                 for (; j < strlen(input_path.c_str()); ++j) {
@@ -69,6 +72,7 @@ int main(int argc, const char * argv[]) {
                 }
                 total_input_path[j] = '\0';
                 
+                // Get total_output_path.  e.g. ../dataset/PerLocOutput/
                 char total_output_path[200];
                 j = 0;
                 for (; j < strlen(output_path.c_str()); ++j) {
@@ -84,4 +88,3 @@ int main(int argc, const char * argv[]) {
     }
     return 0;
 }
-
