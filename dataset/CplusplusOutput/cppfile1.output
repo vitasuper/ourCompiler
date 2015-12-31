@@ -1,0 +1,364 @@
+View: ID
++-----------------------------------+
+| ID                                |
++-----------------------------------+
+| include:(1,8)                     |
+| cocos2d:(10,17)                   |
+| h:(18,19)                         |
+| include:(23,30)                   |
+| DBUtil:(32,38)                    |
+| sqlite3:(39,46)                   |
+| h:(47,48)                         |
+| include:(52,59)                   |
+| ui:(61,63)                        |
+| UILoadingBar:(64,76)              |
+| h:(77,78)                         |
+| include:(82,89)                   |
+| string:(91,97)                    |
+| define:(101,107)                  |
+| MAX_LEVEL:(108,117)               |
+| using:(124,129)                   |
+| namespace:(130,139)               |
+| std:(140,143)                     |
+| USING_NS_CC:(146,157)             |
+| class:(162,167)                   |
+| MyGame:(168,174)                  |
+| public:(176,182)                  |
+| Layer:(183,188)                   |
+| public:(193,199)                  |
+| MyGame:(203,209)                  |
+| MyGame:(216,222)                  |
+| static:(230,236)                  |
+| cocos2d:(237,244)                 |
+| Scene:(246,251)                   |
+| createScene:(253,264)             |
+| CREATE_FUNC:(272,283)             |
+| MyGame:(284,290)                  |
+| virtual:(297,304)                 |
+| bool:(305,309)                    |
+| init:(310,314)                    |
+| void:(322,326)                    |
+| createMenu:(327,337)              |
+| void:(343,347)                    |
+| updateLoadingBar:(348,364)        |
+| int:(365,368)                     |
+| per:(369,372)                     |
+| void:(377,381)                    |
+| levelUp:(382,389)                 |
+| int:(390,393)                     |
+| x:(394,395)                       |
+| string:(402,408)                  |
+| expPrint:(409,417)                |
+| void:(423,427)                    |
+| getDataBySqlite:(428,443)         |
+| void:(449,453)                    |
+| onPause:(454,461)                 |
+| Object:(462,468)                  |
+| sender:(470,476)                  |
+| void:(481,485)                    |
+| saveDataBySqlite:(486,502)        |
+| void:(508,512)                    |
+| menuBackCallback:(513,529)        |
+| Ref:(530,533)                     |
+| ref:(535,538)                     |
+| void:(543,547)                    |
+| menuResumeCallback:(548,566)      |
+| Ref:(567,570)                     |
+| ref:(572,575)                     |
+| Map:(584,587)                     |
+| Game:(588,592)                    |
+| void:(595,599)                    |
+| createTMX:(600,609)               |
+| void:(615,619)                    |
+| keyboardEvent:(620,633)           |
+| void:(639,643)                    |
+| playerMove:(644,654)              |
+| Vec2:(655,659)                    |
+| direction:(660,669)               |
+| void:(674,678)                    |
+| ifSuccess:(679,688)               |
+| Vec2:(689,693)                    |
+| s:(694,695)                       |
+| judge:(703,708)                   |
+| if:(709,711)                      |
+| win:(712,715)                     |
+| void:(718,722)                    |
+| ifGetBack:(723,732)               |
+| void:(738,742)                    |
+| startGame:(743,752)               |
+| Ref:(753,756)                     |
+| ref:(758,761)                     |
+| void:(766,770)                    |
+| createMissions:(771,785)          |
+| void:(791,795)                    |
+| win:(796,799)                     |
+| void:(805,809)                    |
+| lose:(810,814)                    |
+| void:(820,824)                    |
+| winOK:(825,830)                   |
+| Ref:(831,834)                     |
+| ref:(836,839)                     |
+| void:(844,848)                    |
+| loseOK:(849,855)                  |
+| Ref:(856,859)                     |
+| ref:(861,864)                     |
+| int:(869,872)                     |
+| playtimeEveryLevel:(873,891)      |
+| void:(897,901)                    |
+| getPlayerRandomPosition:(902,925) |
+| void:(931,935)                    |
+| getProp:(936,943)                 |
+| int:(944,947)                     |
+| prop:(948,952)                    |
+| private:(956,963)                 |
+| datum:(969,974)                   |
+| int:(977,980)                     |
+| exp:(982,985)                     |
+| int:(989,992)                     |
+| level:(994,999)                   |
+| int:(1003,1006)                   |
+| cafePosX:(1008,1016)              |
+| int:(1024,1027)                   |
+| cafePosY:(1029,1037)              |
+| static:(1045,1051)                |
+| int:(1052,1055)                   |
+| everyLevelExp:(1056,1069)         |
+| int:(1079,1082)                   |
+| deterX:(1083,1089)                |
+| int:(1093,1096)                   |
+| deterY:(1097,1103)                |
+| labels:(1111,1117)                |
+| Label:(1120,1125)                 |
+| labelnumexp:(1127,1138)           |
+| Label:(1142,1147)                 |
+| labellevel:(1149,1159)            |
+| Label:(1163,1168)                 |
+| labelcount:(1170,1180)            |
+| MenuItem:(1189,1197)              |
+| MenuItemImage:(1200,1213)         |
+| startButton:(1215,1226)           |
+| MenuItemImage:(1230,1243)         |
+| pauseButton:(1245,1256)           |
+| exp:(1264,1267)                   |
+| bar:(1268,1271)                   |
+| cocos2d:(1274,1281)               |
+| ProgressTimer:(1283,1296)         |
+| pT:(1298,1300)                    |
+| Map:(1308,1311)                   |
+| Game:(1312,1316)                  |
+| TMXTiledMap:(1319,1330)           |
+| map:(1332,1335)                   |
+| cocos2d:(1339,1346)               |
+| Vector:(1348,1354)                |
+| Sprite:(1355,1361)                |
+| background:(1365,1375)            |
+| cocos2d:(1379,1386)               |
+| Vector:(1388,1394)                |
+| Sprite:(1395,1401)                |
+| street:(1405,1411)                |
+| cocos2d:(1415,1422)               |
+| Vector:(1424,1430)                |
+| Sprite:(1431,1437)                |
+| house1:(1441,1447)                |
+| cocos2d:(1451,1458)               |
+| Vector:(1460,1466)                |
+| Sprite:(1467,1473)                |
+| house2:(1477,1483)                |
+| cocos2d:(1487,1494)               |
+| Vector:(1496,1502)                |
+| Sprite:(1503,1509)                |
+| house3:(1513,1519)                |
+| cocos2d:(1523,1530)               |
+| Vector:(1532,1538)                |
+| Sprite:(1539,1545)                |
+| house4:(1549,1555)                |
+| cocos2d:(1559,1566)               |
+| Vector:(1568,1574)                |
+| Sprite:(1575,1581)                |
+| house5:(1585,1591)                |
+| cocos2d:(1595,1602)               |
+| Vector:(1604,1610)                |
+| Sprite:(1611,1617)                |
+| minus1:(1621,1627)                |
+| cocos2d:(1631,1638)               |
+| Vector:(1640,1646)                |
+| Sprite:(1647,1653)                |
+| doubleexp:(1657,1666)             |
+| cocos2d:(1670,1677)               |
+| Vector:(1679,1685)                |
+| Sprite:(1686,1692)                |
+| increasetime:(1696,1708)          |
+| cocos2d:(1712,1719)               |
+| Vector:(1721,1727)                |
+| Sprite:(1728,1734)                |
+| random:(1738,1744)                |
+| Sprite:(1748,1754)                |
+| player:(1756,1762)                |
+| eventdispatcher:(1770,1785)       |
+| for:(1786,1789)                   |
+| keyboard:(1790,1798)              |
+| input:(1799,1804)                 |
+| EventDispatcher:(1807,1822)       |
+| dispatcher:(1824,1834)            |
+| EventListenerKeyboard:(1838,1859) |
+| listener:(1861,1869)              |
+| static:(1875,1881)                |
+| int:(1882,1885)                   |
+| props:(1886,1891)                 |
+| static:(1899,1905)                |
+| int:(1906,1909)                   |
+| countEveryLevel:(1910,1925)       |
+| bool:(1935,1939)                  |
+| isGaming:(1940,1948)              |
+| bool:(1952,1956)                  |
+| isMatch:(1957,1964)               |
+| bool:(1968,1972)                  |
+| isDoubleExp:(1973,1984)           |
+| if:(1988,1990)                    |
+| get:(1991,1994)                   |
+| the:(1995,1998)                   |
+| prop:(1999,2003)                  |
+| bool:(2006,2010)                  |
+| isIncreaseTime:(2011,2025)        |
+| if:(2031,2033)                    |
+| get:(2034,2037)                   |
+| the:(2038,2041)                   |
+| prop:(2042,2046)                  |
+| bool:(2049,2053)                  |
+| isMinus1:(2054,2062)              |
+| if:(2070,2072)                    |
+| get:(2073,2076)                   |
+| the:(2077,2080)                   |
+| prop:(2081,2085)                  |
+| int:(2088,2091)                   |
+| doubleexp:(2092,2101)             |
+| record:(2108,2114)                |
+| the:(2115,2118)                   |
+| double:(2119,2125)                |
+| times:(2126,2131)                 |
+| int:(2144,2147)                   |
+| count:(2148,2153)                 |
+| calculate:(2162,2171)             |
+| time:(2172,2176)                  |
+| int:(2179,2182)                   |
+| startTime:(2183,2192)             |
+| int:(2199,2202)                   |
+| endTime:(2203,2210)               |
+| int:(2219,2222)                   |
+| bonusExp:(2223,2231)              |
+| Timer:(2240,2245)                 |
+| Label:(2250,2255)                 |
+| show_time:(2257,2266)             |
+| int:(2270,2273)                   |
+| time_left:(2274,2283)             |
+| void:(2287,2291)                  |
+| updateShowTime:(2292,2306)        |
+| float:(2307,2312)                 |
+| delta:(2313,2318)                 |
+| void:(2323,2327)                  |
+| Timer:(2328,2333)                 |
+| sqlite3:(2341,2348)               |
+| pdb:(2350,2353)                   |
++-----------------------------------+
+257 rows in set
+
+View: Parameter
++----------------------------+
+| Parameter                  |
++----------------------------+
+| ():(209,211)               |
+| ():(222,224)               |
+| ():(264,266)               |
+| (MyGame):(283,291)         |
+| ():(314,316)               |
+| ():(337,339)               |
+| (int per):(364,373)        |
+| (int x):(389,396)          |
+| ():(417,419)               |
+| ():(443,445)               |
+| ():(502,504)               |
+| ():(609,611)               |
+| ():(633,635)               |
+| (Vec2 direction):(654,670) |
+| (Vec2 s):(688,696)         |
+| ():(732,734)               |
+| ():(785,787)               |
+| ():(799,801)               |
+| ():(814,816)               |
+| ():(891,893)               |
+| ():(925,927)               |
+| (int prop):(943,953)       |
+| (float delta):(2306,2319)  |
+| ():(2333,2335)             |
++----------------------------+
+24 rows in set
+
+View: Class
++------------------------+------------------+
+| Class                  | ClassName        |
++------------------------+------------------+
+| class MyGame:(162,174) | MyGame:(168,174) |
++------------------------+------------------+
+1 row in set
+
+View: Constructor
++-------------+-----------+
+| Constructor | Parameter |
++-------------+-----------+
++-------------+-----------+
+0 row in set
+
+View: Method
++----------------------------------------------+-----------------------------------+----------------------------+------------------+
+| Method                                       | MethodName                        | Parameter                  | ReturnType       |
++----------------------------------------------+-----------------------------------+----------------------------+------------------+
+| bool init():(305,316)                        | init:(310,314)                    | ():(314,316)               | bool:(305,309)   |
+| void createMenu():(322,339)                  | createMenu:(327,337)              | ():(337,339)               | void:(322,326)   |
+| void updateLoadingBar(int per):(343,373)     | updateLoadingBar:(348,364)        | (int per):(364,373)        | void:(343,347)   |
+| void levelUp(int x):(377,396)                | levelUp:(382,389)                 | (int x):(389,396)          | void:(377,381)   |
+| string expPrint():(402,419)                  | expPrint:(409,417)                | ():(417,419)               | string:(402,408) |
+| void getDataBySqlite():(423,445)             | getDataBySqlite:(428,443)         | ():(443,445)               | void:(423,427)   |
+| void saveDataBySqlite():(481,504)            | saveDataBySqlite:(486,502)        | ():(502,504)               | void:(481,485)   |
+| void createTMX():(595,611)                   | createTMX:(600,609)               | ():(609,611)               | void:(595,599)   |
+| void keyboardEvent():(615,635)               | keyboardEvent:(620,633)           | ():(633,635)               | void:(615,619)   |
+| void playerMove(Vec2 direction):(639,670)    | playerMove:(644,654)              | (Vec2 direction):(654,670) | void:(639,643)   |
+| void ifSuccess(Vec2 s):(674,696)             | ifSuccess:(679,688)               | (Vec2 s):(688,696)         | void:(674,678)   |
+| void ifGetBack():(718,734)                   | ifGetBack:(723,732)               | ():(732,734)               | void:(718,722)   |
+| void createMissions():(766,787)              | createMissions:(771,785)          | ():(785,787)               | void:(766,770)   |
+| void win():(791,801)                         | win:(796,799)                     | ():(799,801)               | void:(791,795)   |
+| void lose():(805,816)                        | lose:(810,814)                    | ():(814,816)               | void:(805,809)   |
+| int playtimeEveryLevel():(869,893)           | playtimeEveryLevel:(873,891)      | ():(891,893)               | int:(869,872)    |
+| void getPlayerRandomPosition():(897,927)     | getPlayerRandomPosition:(902,925) | ():(925,927)               | void:(897,901)   |
+| void getProp(int prop):(931,953)             | getProp:(936,943)                 | (int prop):(943,953)       | void:(931,935)   |
+| void updateShowTime(float delta):(2287,2319) | updateShowTime:(2292,2306)        | (float delta):(2306,2319)  | void:(2287,2291) |
+| void Timer():(2323,2335)                     | Timer:(2328,2333)                 | ():(2333,2335)             | void:(2323,2327) |
++----------------------------------------------+-----------------------------------+----------------------------+------------------+
+20 rows in set
+
+View: ReturntypeAndMethodNameOnly
++-----------------------------------+------------------+
+| MethodName                        | ReturnType       |
++-----------------------------------+------------------+
+| init:(310,314)                    | bool:(305,309)   |
+| createMenu:(327,337)              | void:(322,326)   |
+| updateLoadingBar:(348,364)        | void:(343,347)   |
+| levelUp:(382,389)                 | void:(377,381)   |
+| expPrint:(409,417)                | string:(402,408) |
+| getDataBySqlite:(428,443)         | void:(423,427)   |
+| saveDataBySqlite:(486,502)        | void:(481,485)   |
+| createTMX:(600,609)               | void:(595,599)   |
+| keyboardEvent:(620,633)           | void:(615,619)   |
+| playerMove:(644,654)              | void:(639,643)   |
+| ifSuccess:(679,688)               | void:(674,678)   |
+| ifGetBack:(723,732)               | void:(718,722)   |
+| createMissions:(771,785)          | void:(766,770)   |
+| win:(796,799)                     | void:(791,795)   |
+| lose:(810,814)                    | void:(805,809)   |
+| playtimeEveryLevel:(873,891)      | int:(869,872)    |
+| getPlayerRandomPosition:(902,925) | void:(897,901)   |
+| getProp:(936,943)                 | void:(931,935)   |
+| updateShowTime:(2292,2306)        | void:(2287,2291) |
+| Timer:(2328,2333)                 | void:(2323,2327) |
++-----------------------------------+------------------+
+20 rows in set
+

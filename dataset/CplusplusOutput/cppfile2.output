@@ -1,0 +1,291 @@
+View: ID
++------------------------------------+
+| ID                                 |
++------------------------------------+
+| ifndef:(4,10)                      |
+| TARD_GAME_SCENE_H_:(12,30)         |
+| define:(32,38)                     |
+| TRAD_GAME_SCENE_H_:(40,58)         |
+| include:(61,68)                    |
+| cocos2d:(70,77)                    |
+| h:(78,79)                          |
+| include:(82,89)                    |
+| GameItem:(91,99)                   |
+| h:(100,101)                        |
+| USING_NS_CC:(104,115)              |
+| class:(118,123)                    |
+| TradGameScene:(124,137)            |
+| public:(140,146)                   |
+| Layer:(147,152)                    |
+| public:(155,161)                   |
+| static:(164,170)                   |
+| Scene:(171,176)                    |
+| createScene:(178,189)              |
+| bool:(194,198)                     |
+| init:(199,203)                     |
+| CREATE_FUNC:(208,219)              |
+| TradGameScene:(220,233)            |
+| private:(238,245)                  |
+| void:(248,252)                     |
+| background_change:(253,270)        |
+| float:(271,276)                    |
+| dt:(277,279)                       |
+| void:(283,287)                     |
+| background_schedule:(288,307)      |
+| void:(313,317)                     |
+| sceneInit:(318,327)                |
+| void:(332,336)                     |
+| create_player:(337,350)            |
+| void:(356,360)                     |
+| listen_space:(361,373)             |
+| void:(378,382)                     |
+| listen_move:(383,394)              |
+| void:(399,403)                     |
+| listen_esc:(404,414)               |
+| void:(420,424)                     |
+| playerMoveL:(425,436)              |
+| float:(437,442)                    |
+| dt:(443,445)                       |
+| void:(449,453)                     |
+| playerMoveR:(454,465)              |
+| float:(466,471)                    |
+| dt:(472,474)                       |
+| void:(479,483)                     |
+| score_change:(484,496)             |
+| float:(497,502)                    |
+| dt:(503,505)                       |
+| void:(509,513)                     |
+| score_schedule:(514,528)           |
+| void:(534,538)                     |
+| roadblock_create:(539,555)         |
+| float:(556,561)                    |
+| dt:(562,564)                       |
+| void:(568,572)                     |
+| roadblockCreate_schedule:(573,597) |
+| void:(603,607)                     |
+| roadblock_move:(608,622)           |
+| float:(623,628)                    |
+| dt:(629,631)                       |
+| void:(635,639)                     |
+| roadblockMove_schedule:(640,662)   |
+| void:(668,672)                     |
+| wig_create:(673,683)               |
+| float:(684,689)                    |
+| dt:(690,692)                       |
+| void:(696,700)                     |
+| wigCreate_schedule:(701,719)       |
+| void:(725,729)                     |
+| wig_move:(730,738)                 |
+| float:(739,744)                    |
+| dt:(745,747)                       |
+| void:(751,755)                     |
+| wigMove_schedule:(756,772)         |
+| void:(778,782)                     |
+| collision_check:(783,798)          |
+| float:(799,804)                    |
+| dt:(805,807)                       |
+| void:(811,815)                     |
+| collisionCheck_schedule:(816,839)  |
+| void:(845,849)                     |
+| throwPenalty:(850,862)             |
+| int:(863,866)                      |
+| tag:(867,870)                      |
+| void:(874,878)                     |
+| throwAward:(879,889)               |
+| int:(890,893)                      |
+| tag:(894,897)                      |
+| void:(902,906)                     |
+| invTime_change:(907,921)           |
+| float:(922,927)                    |
+| dt:(928,930)                       |
+| void:(934,938)                     |
+| invTime_schedule:(939,955)         |
+| void:(961,965)                     |
+| reschedule:(966,976)               |
+| float:(977,982)                    |
+| dt:(983,985)                       |
+| void:(989,993)                     |
+| rescheduleSchedule:(994,1012)      |
+| Size:(1018,1022)                   |
+| visibleSize:(1023,1034)            |
+| Vec2:(1037,1041)                   |
+| origin:(1042,1048)                 |
+| Vector:(1052,1058)                 |
+| GameItem:(1059,1067)               |
+| roadblocks:(1070,1080)             |
+| Vector:(1086,1092)                 |
+| GameItem:(1093,1101)               |
+| wigs:(1104,1108)                   |
+| Sprite:(1115,1121)                 |
+| bg1:(1123,1126)                    |
+| Sprite:(1129,1135)                 |
+| bg2:(1137,1140)                    |
+| Sprite:(1143,1149)                 |
+| player:(1151,1157)                 |
+| ParticleFireworks:(1160,1177)      |
+| invEffect:(1179,1188)              |
+| int:(1191,1194)                    |
+| player_pos:(1195,1205)             |
+| EventListenerKeyboard:(1208,1229)  |
+| space_listener:(1231,1245)         |
+| EventListenerKeyboard:(1248,1269)  |
+| move_listener:(1271,1284)          |
+| EventListenerKeyboard:(1287,1308)  |
+| esc_listener:(1310,1322)           |
+| Label:(1326,1331)                  |
+| score_display:(1333,1346)          |
+| Label:(1349,1354)                  |
+| iT_display:(1356,1366)             |
+| Label:(1369,1374)                  |
+| scoreInfo:(1376,1385)              |
+| Label:(1388,1393)                  |
+| iTInfo:(1395,1401)                 |
+| int:(1405,1408)                    |
+| bg_roll:(1409,1416)                |
+| int:(1419,1422)                    |
+| move_d:(1423,1429)                 |
+| int:(1432,1435)                    |
+| jump_h:(1436,1442)                 |
+| double:(1445,1451)                 |
+| process_t:(1452,1461)              |
+| double:(1464,1470)                 |
+| inv_minus:(1471,1480)              |
+| int:(1484,1487)                    |
+| score:(1488,1493)                  |
+| double:(1496,1502)                 |
+| invTime:(1503,1510)                |
+| bool:(1513,1517)                   |
+| isInvincible:(1518,1530)           |
+| ProgressTimer:(1534,1547)          |
+| invTime_display:(1549,1564)        |
+| unsigned:(1568,1576)               |
+| int:(1577,1580)                    |
+| inveffId:(1581,1589)               |
+| unsigned:(1592,1600)               |
+| seed:(1601,1605)                   |
+| endif:(1612,1617)                  |
++------------------------------------+
+162 rows in set
+
+View: Parameter
++---------------------------+
+| Parameter                 |
++---------------------------+
+| ():(189,191)              |
+| ():(203,205)              |
+| (TradGameScene):(219,234) |
+| (float dt):(270,280)      |
+| ():(307,309)              |
+| ():(327,329)              |
+| ():(350,352)              |
+| ():(373,375)              |
+| ():(394,396)              |
+| ():(414,416)              |
+| (float dt):(436,446)      |
+| (float dt):(465,475)      |
+| (float dt):(496,506)      |
+| ():(528,530)              |
+| (float dt):(555,565)      |
+| ():(597,599)              |
+| (float dt):(622,632)      |
+| ():(662,664)              |
+| (float dt):(683,693)      |
+| ():(719,721)              |
+| (float dt):(738,748)      |
+| ():(772,774)              |
+| (float dt):(798,808)      |
+| ():(839,841)              |
+| (int tag):(862,871)       |
+| (int tag):(889,898)       |
+| (float dt):(921,931)      |
+| ():(955,957)              |
+| (float dt):(976,986)      |
+| ():(1012,1014)            |
++---------------------------+
+30 rows in set
+
+View: Class
++-------------------------------+-------------------------+
+| Class                         | ClassName               |
++-------------------------------+-------------------------+
+| class TradGameScene:(118,137) | TradGameScene:(124,137) |
++-------------------------------+-------------------------+
+1 row in set
+
+View: Constructor
++-------------+-----------+
+| Constructor | Parameter |
++-------------+-----------+
++-------------+-----------+
+0 row in set
+
+View: Method
++--------------------------------------------+------------------------------------+----------------------+----------------+
+| Method                                     | MethodName                         | Parameter            | ReturnType     |
++--------------------------------------------+------------------------------------+----------------------+----------------+
+| bool init():(194,205)                      | init:(199,203)                     | ():(203,205)         | bool:(194,198) |
+| void background_change(float dt):(248,280) | background_change:(253,270)        | (float dt):(270,280) | void:(248,252) |
+| void background_schedule():(283,309)       | background_schedule:(288,307)      | ():(307,309)         | void:(283,287) |
+| void sceneInit():(313,329)                 | sceneInit:(318,327)                | ():(327,329)         | void:(313,317) |
+| void create_player():(332,352)             | create_player:(337,350)            | ():(350,352)         | void:(332,336) |
+| void listen_space():(356,375)              | listen_space:(361,373)             | ():(373,375)         | void:(356,360) |
+| void listen_move():(378,396)               | listen_move:(383,394)              | ():(394,396)         | void:(378,382) |
+| void listen_esc():(399,416)                | listen_esc:(404,414)               | ():(414,416)         | void:(399,403) |
+| void playerMoveL(float dt):(420,446)       | playerMoveL:(425,436)              | (float dt):(436,446) | void:(420,424) |
+| void playerMoveR(float dt):(449,475)       | playerMoveR:(454,465)              | (float dt):(465,475) | void:(449,453) |
+| void score_change(float dt):(479,506)      | score_change:(484,496)             | (float dt):(496,506) | void:(479,483) |
+| void score_schedule():(509,530)            | score_schedule:(514,528)           | ():(528,530)         | void:(509,513) |
+| void roadblock_create(float dt):(534,565)  | roadblock_create:(539,555)         | (float dt):(555,565) | void:(534,538) |
+| void roadblockCreate_schedule():(568,599)  | roadblockCreate_schedule:(573,597) | ():(597,599)         | void:(568,572) |
+| void roadblock_move(float dt):(603,632)    | roadblock_move:(608,622)           | (float dt):(622,632) | void:(603,607) |
+| void roadblockMove_schedule():(635,664)    | roadblockMove_schedule:(640,662)   | ():(662,664)         | void:(635,639) |
+| void wig_create(float dt):(668,693)        | wig_create:(673,683)               | (float dt):(683,693) | void:(668,672) |
+| void wigCreate_schedule():(696,721)        | wigCreate_schedule:(701,719)       | ():(719,721)         | void:(696,700) |
+| void wig_move(float dt):(725,748)          | wig_move:(730,738)                 | (float dt):(738,748) | void:(725,729) |
+| void wigMove_schedule():(751,774)          | wigMove_schedule:(756,772)         | ():(772,774)         | void:(751,755) |
+| void collision_check(float dt):(778,808)   | collision_check:(783,798)          | (float dt):(798,808) | void:(778,782) |
+| void collisionCheck_schedule():(811,841)   | collisionCheck_schedule:(816,839)  | ():(839,841)         | void:(811,815) |
+| void throwPenalty(int tag):(845,871)       | throwPenalty:(850,862)             | (int tag):(862,871)  | void:(845,849) |
+| void throwAward(int tag):(874,898)         | throwAward:(879,889)               | (int tag):(889,898)  | void:(874,878) |
+| void invTime_change(float dt):(902,931)    | invTime_change:(907,921)           | (float dt):(921,931) | void:(902,906) |
+| void invTime_schedule():(934,957)          | invTime_schedule:(939,955)         | ():(955,957)         | void:(934,938) |
+| void reschedule(float dt):(961,986)        | reschedule:(966,976)               | (float dt):(976,986) | void:(961,965) |
+| void rescheduleSchedule():(989,1014)       | rescheduleSchedule:(994,1012)      | ():(1012,1014)       | void:(989,993) |
++--------------------------------------------+------------------------------------+----------------------+----------------+
+28 rows in set
+
+View: ReturntypeAndMethodNameOnly
++------------------------------------+----------------+
+| MethodName                         | ReturnType     |
++------------------------------------+----------------+
+| init:(199,203)                     | bool:(194,198) |
+| background_change:(253,270)        | void:(248,252) |
+| background_schedule:(288,307)      | void:(283,287) |
+| sceneInit:(318,327)                | void:(313,317) |
+| create_player:(337,350)            | void:(332,336) |
+| listen_space:(361,373)             | void:(356,360) |
+| listen_move:(383,394)              | void:(378,382) |
+| listen_esc:(404,414)               | void:(399,403) |
+| playerMoveL:(425,436)              | void:(420,424) |
+| playerMoveR:(454,465)              | void:(449,453) |
+| score_change:(484,496)             | void:(479,483) |
+| score_schedule:(514,528)           | void:(509,513) |
+| roadblock_create:(539,555)         | void:(534,538) |
+| roadblockCreate_schedule:(573,597) | void:(568,572) |
+| roadblock_move:(608,622)           | void:(603,607) |
+| roadblockMove_schedule:(640,662)   | void:(635,639) |
+| wig_create:(673,683)               | void:(668,672) |
+| wigCreate_schedule:(701,719)       | void:(696,700) |
+| wig_move:(730,738)                 | void:(725,729) |
+| wigMove_schedule:(756,772)         | void:(751,755) |
+| collision_check:(783,798)          | void:(778,782) |
+| collisionCheck_schedule:(816,839)  | void:(811,815) |
+| throwPenalty:(850,862)             | void:(845,849) |
+| throwAward:(879,889)               | void:(874,878) |
+| invTime_change:(907,921)           | void:(902,906) |
+| invTime_schedule:(939,955)         | void:(934,938) |
+| reschedule:(966,976)               | void:(961,965) |
+| rescheduleSchedule:(994,1012)      | void:(989,993) |
++------------------------------------+----------------+
+28 rows in set
+

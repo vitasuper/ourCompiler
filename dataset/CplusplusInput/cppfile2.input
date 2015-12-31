@@ -1,0 +1,94 @@
+﻿#ifndef _TARD_GAME_SCENE_H_
+#define _TRAD_GAME_SCENE_H_
+
+#include "cocos2d.h"
+#include "GameItem.h"
+
+USING_NS_CC;
+
+class TradGameScene : public Layer
+{
+public:
+	static Scene* createScene();
+	bool init();
+	CREATE_FUNC(TradGameScene);
+
+
+private:
+	void background_change(float dt);
+	void background_schedule();
+
+	void sceneInit();
+	void create_player();
+
+	void listen_space();
+	void listen_move();
+	void listen_esc();
+
+	void playerMoveL(float dt);
+	void playerMoveR(float dt);
+
+	void score_change(float dt);
+	void score_schedule();
+
+	void roadblock_create(float dt);
+	void roadblockCreate_schedule();
+
+	void roadblock_move(float dt);
+	void roadblockMove_schedule();
+
+	void wig_create(float dt);
+	void wigCreate_schedule();
+
+	void wig_move(float dt);
+	void wigMove_schedule();
+
+	void collision_check(float dt);
+	void collisionCheck_schedule();
+
+	void throwPenalty(int tag);
+	void throwAward(int tag);
+
+	void invTime_change(float dt);
+	void invTime_schedule();
+
+	void reschedule(float dt);
+	void rescheduleSchedule();
+
+	Size visibleSize;
+	Vec2 origin;
+
+	Vector<GameItem*> roadblocks[5];
+	Vector<GameItem*> wigs[5];
+
+	Sprite *bg1;
+	Sprite *bg2;
+	Sprite *player;
+	ParticleFireworks* invEffect;
+	int player_pos;
+	EventListenerKeyboard *space_listener;
+	EventListenerKeyboard *move_listener;
+	EventListenerKeyboard *esc_listener;
+
+	Label *score_display;
+	Label *iT_display;
+	Label *scoreInfo;
+	Label *iTInfo;
+
+	int bg_roll;
+	int move_d;
+	int jump_h;
+	double process_t;
+	double inv_minus;
+
+	int score;
+	double invTime;
+	bool isInvincible;
+
+	ProgressTimer *invTime_display;
+
+	unsigned int inveffId;
+	unsigned seed;
+};
+
+#endif
