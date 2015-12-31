@@ -6,19 +6,32 @@ An AQL Subset Compiler implemented by 322.
 #### Contents
 
 ```
-.
+ourCompiler
 ├── Readme.md
-├── content.md
 ├── dataset
+│   ├── Cplusplus.aql
+│   ├── CplusplusInput
+│   │   ├── cppfile1.input
+│   │   └── cppfile2.input
+│   ├── CplusplusOutput
+│   │   ├── cppfile1.output
+│   │   └── cppfile2.output
 │   ├── PerLoc.aql
-│   ├── PerLoc.input
-│   ├── PerLoc.output
+│   ├── PerLocInput
+│   │   ├── A.input
+│   │   └── PerLoc.input
+│   ├── PerLocOutput
+│   │   ├── A.output
+│   │   └── PerLoc.output
 │   ├── Revenue.aql
-│   ├── Revenue.input
-│   └── Revenue.output
+│   ├── RevenueInput
+│   │   └── Revenue.input
+│   └── RevenueOutput
+│       └── Revenue.output
 └── src
     ├── Lexer.cpp
     ├── Lexer.h
+    ├── Makefile
     ├── Parser.cpp
     ├── Parser.h
     ├── Tokenizer.cpp
@@ -28,8 +41,7 @@ An AQL Subset Compiler implemented by 322.
     ├── main.cpp
     └── regex.cpp
 
-2 directories, 18 files
-
+8 directories, 25 files
 ```
 
 #### To-dos
@@ -38,7 +50,6 @@ An AQL Subset Compiler implemented by 322.
     * Parser
 * Text Tokenizer Pattern Matcher
 * Regular Expression Engine
-
 
 #### Members
 * @Vitasuper
