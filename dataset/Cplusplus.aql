@@ -1,0 +1,40 @@
+create view ID as
+	extract regex /[A-Za-z][A-Za-z_0-9]*/
+		on D.text as ID
+	from Document D;
+
+create view Parameter as
+	extract regex /\([A-Za-z_0-9 ]*\)/
+		on D.text as Parameter
+	from Document D;
+
+create view Class as
+	extract pattern /class/ (<I.ID>)
+		return group 0 as Class
+		   and group 1 as ClassName
+	from ID I;
+
+create view Constructor as
+	extract pattern <C.ClassName> (<P.Parameter>)
+		return group 0 as Constructor
+			and group 1 as Parameter
+	from Class C, Parameter P;
+
+create view Method as
+	extract pattern (<I.ID>) (<I.ID>) (<P.Parameter>)
+		return group 0 as Method
+		   and group 1 as ReturnType
+		   and group 2 as MethodName
+		   and group 3 as Parameter
+	from ID I, Parameter P;
+
+create view ReturntypeAndMethodNameOnly as
+  	select M.ReturnType as ReturnType, M.MethodName as MethodName
+  	from Method M;
+
+output view ID;
+output view Parameter;
+output view Class;
+output view Constructor;
+output view Method;
+output view ReturntypeAndMethodNameOnly;

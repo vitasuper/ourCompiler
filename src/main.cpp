@@ -3,56 +3,85 @@
 //
 
 #include <iostream>
+#include <cstdio>
 #include <vector>
+#include <string>
+#include <cstring>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <dirent.h>
 #include "Tokenizer.h"
 #include "Lexer.h"
 #include "Parser.h"
-//#define TEST1 1
 using namespace std;
 
-vector<vector<int> > findall(const char *regex, const char *content);
-
 int main(int argc, const char * argv[]) {
-
-#ifdef TEST1
-    char regex[] = "(hello)[a-z]+(what)";
-    char content[] = "helloaa0awhat";
-    vector< vector<int> > result;
-    result = findall(regex, content);
-    
-    if (result.size() > 0) {
-        for (int i = 0; i < result[0].size(); i += 2) {
-            printf("(%d, %d)", result[0][i], result[0][i+1]);
-        }
-        printf("\n");
-    } else {
-        cout << "No match!" << endl;
+    if (argc != 4) {
+        cout << "The number of parameter is not correct! Please check out and try again!" << endl;
+        return 0;
     }
-
-#else
-//    Token t = Token("a", "b");
-//    Token xx = t;
-//    
-//    cout << xx.value << " " << xx.type;
-//    
-    string code_path = "/Users/vitasuper/Desktop/PerLoc.aql";
-    string input_path = "/Users/vitasuper/Desktop/PerLoc.input";
-//    Tokenizer tn = Tokenizer(input_path);
-//    for (int i = 0; i < tn.get_words().size(); ++i) {
-//        cout << tn.get_words().at(i).value;
-//        printf("(%d, %d)\n", tn.get_words().at(i).start_pos, tn.get_words().at(i).end_pos);
-//    }
-//    cout << tn.get_words_num_between(6, 57) << endl;
     
-    Lexer l = Lexer(code_path);
-    vector<Token> v = l.get_tokens();
+    string code_path = argv[1];
+    string input_path = argv[2];
+    string output_path = argv[3];
     
-    Parser p = Parser(v, input_path.c_str(), "asd");
-    p.start();
-    //p.print_views();
-#endif
+    if (input_path.substr(input_path.size()-6, 6) == ".input") {
+        // If input_path is a *.input file
+        Lexer l = Lexer(code_path);
+        vector<Token> v = l.get_tokens();
+        Parser p = Parser(v, input_path.c_str(), output_path.c_str());
+        p.start();
+        return 0;
+    } else {
+        // If input_path is a directory
+        DIR *dp;
+        struct dirent *dirp;
+        if ((dp = opendir(input_path.c_str())) == NULL) {
+            cout << "Can't open " << input_path << endl;
+            return 0;
+        }
+        
+        while ((dirp = readdir(dp)) != NULL) {
+            char file_name[200], suffix[200];
+            
+            char input_suffix[] = ".input";
+            char output_suffix[] = ".output";
+            
+            if (strlen(dirp->d_name) >= 6 && strcmp(strcpy(suffix, (dirp->d_name + strlen(dirp->d_name) - 6)), input_suffix) == 0) {
+                int i = 0;
+                for (; i < strlen(dirp->d_name); ++i) {
+                    if (dirp->d_name[i] != '.') {
+                        file_name[i] = dirp->d_name[i];
+                    } else {
+                        break;
+                    }
+                }
+                file_name[i] = '\0';
+                
+                Lexer l = Lexer(code_path);
+                vector<Token> v = l.get_tokens();
+                
+                char total_input_path[200];
+                int j = 0;
+                for (; j < strlen(input_path.c_str()); ++j) {
+                    total_input_path[j] = input_path.c_str()[j];
+                }
+                total_input_path[j] = '\0';
+                
+                char total_output_path[200];
+                j = 0;
+                for (; j < strlen(output_path.c_str()); ++j) {
+                    total_output_path[j] = output_path.c_str()[j];
+                }
+                total_output_path[j] = '\0';
+                
+                Parser p = Parser(v, strcat(strcat(total_input_path, file_name), input_suffix), strcat(strcat(total_output_path, file_name), output_suffix));
+                p.start();
+            }
+        }
+        return 0;
+    }
     return 0;
 }
+

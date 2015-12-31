@@ -1,6 +1,7 @@
 #ifndef PARSER_H_INCLUDED
 #define PARSER_H_INCLUDED
 
+#include <vector>
 #include "Lexer.h"
 #include "View.h"
 #include "Tokenizer.h"
@@ -37,7 +38,7 @@ struct Single_group {
 
 class Parser {
   public:
-    Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_output_path);
+    Parser(vector<Token> _lex_tokens, const char* _input_path, const char* _output_path);
     void start();
     void create_stmt();
     vector<View_col> view_stmt();
@@ -79,7 +80,11 @@ class Parser {
     int current_num;
     const char *input_path;
     const char *output_path;
-
+    
+//    string input_path;
+//    string output_path;
+//    
+    string file_name;
     string input_document;
     Tokenizer tokenizer;
 

@@ -9,7 +9,7 @@ using namespace std;
 
 vector<vector<int> > findall(const char *regex, const char *content);
 
-Parser::Parser(vector<Token> _lex_tokens, const char *_input_path, const char *_output_path) : tokenizer(_input_path) {
+Parser::Parser(vector<Token> _lex_tokens, const char* _input_path, const char* _output_path) : tokenizer(_input_path) {
     lex_tokens = _lex_tokens;
     input_path = _input_path;
     output_path = _output_path;
@@ -249,9 +249,9 @@ vector<View_col> Parser::extract_stmt() {
             if (processed_pattern.at(i).type == "REG") {
                 vector< vector<int> > reg_locations = findall(processed_pattern.at(i).reg_value.c_str(), input_document.c_str());
                 vector<Span> temp_spans;
-                for (unsigned i = 0; i < reg_locations.size(); i++) {
-                    int start_pos = reg_locations.at(i).at(0);
-                    int end_pos = reg_locations.at(i).at(1);
+                for (unsigned j = 0; j < reg_locations.size(); j++) {
+                    int start_pos = reg_locations.at(j).at(0);
+                    int end_pos = reg_locations.at(j).at(1);
                     // get the token's message
                     string token_message = input_document.substr(start_pos, end_pos - start_pos);
                     // form a span
@@ -398,41 +398,61 @@ vector<View_col> Parser::pattern_matching(const vector<Block>& processed_pattern
     }
 
     vector<View_col> view_cols;
-    // establish the view cols in view (from group 1 to group n)
-    for (unsigned i = 0; i < group.at(0).size(); i++) {
-        // for each "ID" of "REG" block, establish its view col
+    if (!group.empty()) {
+        // establish the view cols in view (from group 1 to group n)
+        for (unsigned i = 0; i < group.at(0).size(); i++) {
+            // for each "ID" of "REG" block, establish its view col
+            vector<Span> spans;
+            for (unsigned j = 0; j < group.size(); j++) {
+                spans.push_back(group.at(j).at(i));
+            }
+            if (id_and_reg_blocks.at(i).group_num != -1) {
+                // only establish view cols for captured block (group_num >= 0)
+                View_col view_col(id_and_reg_blocks.at(i).group_name, spans);
+                view_col.set_group_num(id_and_reg_blocks.at(i).group_num);
+                view_cols.push_back(view_col);
+            }
+        }
+        // establish group 0
         vector<Span> spans;
-        for (unsigned j = 0; j < group.size(); j++) {
-            spans.push_back(group.at(j).at(i));
+        for (unsigned i = 0; i < group.size(); i++) {
+            // get the first span from the current big span
+            Span head_span = group.at(i).at(0);
+            // get the last span from the current big span
+            Span rear_span = group.at(i).at(group.at(i).size() - 1);
+            // get the start position of the head span, as the start position of the big span
+            int start_position = head_span.start_pos;
+            // get the end position of the rear span, as the end position of the big span
+            int end_position = rear_span.end_pos;
+            // get the string message from tokenizer
+            string token_message = input_document.substr(start_position, end_position - start_position);
+            // combine the big span (consists of spans) to a span
+            Span span(token_message, start_position, end_position);
+            // add the span
+            spans.push_back(span);
         }
-        if (id_and_reg_blocks.at(i).group_num != -1) {
-            // only establish view cols for captured block (group_num >= 0)
-            View_col view_col(id_and_reg_blocks.at(i).group_name, spans);
-            view_col.set_group_num(id_and_reg_blocks.at(i).group_num);
-            view_cols.push_back(view_col);
+        View_col group_zero(group_names.at(0).value, spans);
+        group_zero.set_group_num(0);
+        view_cols.push_back(group_zero);
+
+    } else {
+        vector<Span> spans;
+        // it means that there is no matching tuple, group 0 is empty
+        for (unsigned i = 0; i < id_and_reg_blocks.size(); i++) {
+            // the view cols are all empty
+            if (id_and_reg_blocks.at(i).group_num != -1) {
+                // only establish view cols for captured block (group_num >= 0)
+                View_col view_col(id_and_reg_blocks.at(i).group_name, spans);
+                view_col.set_group_num(id_and_reg_blocks.at(i).group_num);
+                view_cols.push_back(view_col);
+            }
         }
+        // establish group 0
+        View_col group_zero(group_names.at(0).value, spans);
+        group_zero.set_group_num(0);
+        view_cols.push_back(group_zero);
     }
-    // establish group 0
-    vector<Span> spans;
-    for (unsigned i = 0; i < group.size(); i++) {
-        // get the first span from the current big span
-        Span head_span = group.at(i).at(0);
-        // get the last span from the current big span
-        Span rear_span = group.at(i).at(group.at(i).size() - 1);
-        // get the start position of the head span, as the start position of the big span
-        int start_position = head_span.start_pos;
-        // get the end position of the rear span, as the end position of the big span
-        int end_position = rear_span.end_pos;
-        // get the string message from tokenizer
-        string token_message = input_document.substr(start_position, end_position - start_position);
-        // combine the big span (consists of spans) to a span
-        Span span(token_message, start_position, end_position);
-        // add the span
-        spans.push_back(span);
-    }
-    View_col group_zero(group_names.at(0).value, spans);
-    group_zero.set_group_num(0);
-    view_cols.push_back(group_zero);
+
     return view_cols;
 }
 
@@ -772,11 +792,14 @@ void Parser::output_stmt() {
 
 /** Output the view according to the view's name and alias name **/
 void Parser::output_view(const string& view_name, const string& alias_name) {
+    // For file output
+    ofstream out(output_path, ios::app);
+    
     View specified_view = get_view_by_view_name(view_name);
     if (specified_view.get_view_name().compare("") == 0) {
         /** Such a view does not exist **/
         /* some information */
-        cout << "The View named " << view_name << " has not been created" << endl << endl;
+        out << "The View named " << view_name << " has not been created" << endl << endl;
         return;
     }
     /** output format **/
@@ -791,7 +814,7 @@ void Parser::output_view(const string& view_name, const string& alias_name) {
      +--------------------+
      n rows in set
      **/
-    cout << "View: " << (alias_name.compare("") == 0 ? view_name : alias_name) << endl;
+    out << "View: " << (alias_name.compare("") == 0 ? view_name : alias_name) << endl;
     // current view
     vector<View_col> view_cols = specified_view.get_view_cols();
     // sort the view cols
@@ -835,7 +858,7 @@ void Parser::output_view(const string& view_name, const string& alias_name) {
                  Format 1 (Appear in the first, third and last lines)
                  The format is like "+--------+--------+------+"
                  **/
-                cout << setw(longest_span_length[col] + 3) << setfill('-') << left << "+";
+                out << setw(longest_span_length[col] + 3) << setfill('-') << left << "+";
             }
             
             else {
@@ -846,7 +869,7 @@ void Parser::output_view(const string& view_name, const string& alias_name) {
                      Format 2 (Appear only in the second line)
                      The format is like "| view_col_name1       | view_col_name2         | view_col_name3     |"
                      **/
-                    cout << setw(longest_span_length[col] + 3) << setfill(' ') << left << "| " + view_col.get_view_col_name();
+                    out << setw(longest_span_length[col] + 3) << setfill(' ') << left << "| " + view_col.get_view_col_name();
                 }
                 else {
                     // get spans in current view_col
@@ -855,17 +878,17 @@ void Parser::output_view(const string& view_name, const string& alias_name) {
                      Format 3 (Appear in the rest lines)
                      The format is like "| span1           | span2         | span3       |"
                      **/
-                    cout << setw(longest_span_length[col] + 3) << setfill(' ') << left << "| " + (span_index < current_spans.size() ? current_spans.at(span_index).as_string : "");
+                    out << setw(longest_span_length[col] + 3) << setfill(' ') << left << "| " + (span_index < current_spans.size() ? current_spans.at(span_index).as_string : "");
                 }
             }
             
         }
         // process the line end
         if (row == 0 || row == 2 || row == biggest_view_col_size + 3) {
-            cout << "+" << endl;
+            out << "+" << endl;
         }
         else {
-            cout << "|" << endl;
+            out << "|" << endl;
             if (row != 1) {
                 // add 1 to span index
                 span_index++;
@@ -875,7 +898,10 @@ void Parser::output_view(const string& view_name, const string& alias_name) {
     // for debug
     assert(span_index == biggest_view_col_size);
     
-    cout << biggest_view_col_size << (biggest_view_col_size > 1 ? " rows" : " row") << " in set" << endl << endl;
+    out << biggest_view_col_size << (biggest_view_col_size > 1 ? " rows" : " row") << " in set" << endl << endl;
+    
+    // Close the file.
+    out.close();
 }
 
 void Parser::add_view(View new_view) {

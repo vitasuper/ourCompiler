@@ -1,0 +1,115 @@
+#include "cocos2d.h"
+#include "DBUtil\sqlite3.h"
+#include <ui\UILoadingBar.h>
+#include <string>
+#define MAX_LEVEL 25
+
+using namespace std;
+USING_NS_CC;
+
+class MyGame :public Layer
+{
+public:
+	MyGame();
+	~MyGame();
+
+	static cocos2d::Scene* createScene();
+
+	CREATE_FUNC(MyGame);
+
+	virtual bool init();
+
+	void createMenu();
+	void updateLoadingBar(int per);
+	void levelUp(int x);
+
+	string expPrint();
+	void getDataBySqlite();
+	void onPause(Object* sender);
+	void saveDataBySqlite();
+	void menuBackCallback(Ref *ref);
+	void menuResumeCallback(Ref* ref);
+
+	//Map Game
+	void createTMX();
+	void keyboardEvent();
+	void playerMove(Vec2 direction);
+	void ifSuccess(Vec2 s);    //judge if win
+	void ifGetBack();
+	void startGame(Ref *ref);
+	void createMissions();
+	void win();
+	void lose();
+	void winOK(Ref *ref);
+	void loseOK(Ref *ref);
+	int playtimeEveryLevel();
+	void getPlayerRandomPosition();
+	void getProp(int prop);
+private:
+	//datum
+	int _exp;
+	int _level;
+	int _cafePosX[26];
+	int _cafePosY[26];
+	static int everyLevelExp[25];
+
+	int deterX;
+	int deterY;
+
+	//labels
+	Label *labelnumexp;
+	Label *labellevel;
+	Label *labelcount;
+
+	// MenuItem
+	MenuItemImage* startButton;
+	MenuItemImage* pauseButton;
+
+	//exp bar
+	cocos2d::ProgressTimer *pT;
+
+	//Map Game
+	TMXTiledMap *map;
+	cocos2d::Vector<Sprite*> _background;
+	cocos2d::Vector<Sprite*> _street;
+	cocos2d::Vector<Sprite*> _house1;
+	cocos2d::Vector<Sprite*> _house2;
+	cocos2d::Vector<Sprite*> _house3;
+	cocos2d::Vector<Sprite*> _house4;
+	cocos2d::Vector<Sprite*> _house5;
+	cocos2d::Vector<Sprite*> _minus1;
+	cocos2d::Vector<Sprite*> _doubleexp;
+	cocos2d::Vector<Sprite*> _increasetime;
+	cocos2d::Vector<Sprite*> _random;
+	Sprite* player;
+
+	//eventdispatcher for keyboard input
+	EventDispatcher* dispatcher;
+	EventListenerKeyboard* listener;
+
+	static int props[10];
+	static int countEveryLevel[26];
+
+	bool isGaming;
+	bool isMatch;
+	bool isDoubleExp; //if get the prop
+	bool isIncreaseTime;  // if get the prop
+	bool isMinus1;    // if get the prop
+	int doubleexp;   // record the double times (*2 / *4)
+	int count;
+
+	// calculate time
+	int startTime[3];
+	int endTime[3];
+
+	int bonusExp;
+
+	// Timer
+
+	Label* show_time;
+	int time_left;
+	void updateShowTime(float delta);
+	void Timer();
+
+	sqlite3* pdb;
+};
